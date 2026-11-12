@@ -84,6 +84,20 @@ var stars = new Catalog("https://example.com/catalogs/stars/1.0")
 host.RegisterCatalog(stars);   // a component then says "@catalogId": "https://example.com/catalogs/stars/1.0"
 ```
 
+### Changing the basic catalog
+
+A host can replace or wrap what the basic catalog does without touching any other host: the first change copies the shared catalog.
+
+```csharp
+host.Override("Divider", cx => HorizontalSeparator("replaced").Primary());               // replace a component
+host.Decorate("Button", (cx, inner) => { var b = inner(); /* add to it */ return b; });  // wrap the original: bindings, checks and action stay
+host.OverrideFunction("formatCurrency", (ec, args) => JsonValue.String("..."));          // replace a function
+var mine = host.Extend("https://example.com/catalogs/mine/1.0");                         // a new catalog id, starting from the basic one
+mine.Component("Chart", cx => /* ... */ null);                                           // and add to it
+```
+
+`Catalog` itself has `Component`, `Function`, `Decorate`, `DecorateFunction` and `Clone(newId)` for building a catalog away from a host. `host.OwnCatalog(id)` returns the host's own copy of a registered catalog.
+
 `ComponentContext` is what a factory is handed: `Bind` / `BindString` / `BindBool` (live properties), `Watch` (rebuild on change), `WriteBack`
 (two-way), `Child(id)` / `Children(stack)` (children, templates, progressive rendering), `BindChecks` (validation), `RunAction` (agent events and local
 functions). Everything it creates is released when the component is rebuilt or removed.

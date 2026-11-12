@@ -59,6 +59,7 @@ loads the entry itself first, `await Transpose.Require.RequireAsync(Transpose.Re
   assigning, because Tesserae's `Text`/`IsChecked` setters raise their change event.
 - **Templates** (`children: {componentId, path}`) subscribe to the list and rebuild only when its **length** changes; items bind to their own paths, so typing in a
   field inside a template never rebuilds the list.
+- **A catalog the host started with is shared and never mutated.** `A2UIHost` starts with `BasicCatalog.Instance`; `OwnCatalog` (behind `Override`, `Decorate`, `OverrideFunction`) clones it the first time it is changed, and `RegisterCatalog` / `Extend` mark a catalog as the host's own. Never change `BasicCatalog.Instance` from code that serves one host.
 - **Catalogs resolve strictly**: a component's `@catalogId`, else the surface's `catalogId`, else an error (no fallback unless `A2UIHost.FallbackCatalog`).
   Functions are `rendererOnly` by default; the agent may call only `agentOnly` / `rendererOrAgent` ones; `requiresUserActivation` functions run only in an action.
 - **Everything the renderer cannot do is a protocol error, not an exception**: `A2UIHost.Report` dedupes, raises `OnError` and sends the envelope to the agent.

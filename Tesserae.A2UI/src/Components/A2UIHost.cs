@@ -42,7 +42,7 @@ namespace Tesserae.A2UI
             _root.style.flexDirection = "column";
             _root.style.gap = "16px";
 
-            RegisterCatalog(BasicCatalog.Instance);
+            _catalogs[BasicCatalog.Id] = BasicCatalog.Instance;   // shared: copied the first time this host changes it (OwnCatalog)
         }
 
         // ------------------------------------------------------------------ catalogs
@@ -51,6 +51,61 @@ namespace Tesserae.A2UI
         public A2UIHost RegisterCatalog(Catalog catalog)
         {
             _catalogs[catalog.Id] = catalog;
+            _ownedCatalogs.Add(catalog.Id);   // one the application registered is its own to change
+            return this;
+        }
+
+        private readonly HashSet<string> _ownedCatalogs = new HashSet<string>();
+
+        /// <summary>
+        /// The catalog registered under <paramref name="id"/>, as this host's own copy: a catalog the host started with (the shared basic
+        /// catalog) is copied the first time it is changed, so a change here never reaches another host.
+        /// </summary>
+        public Catalog OwnCatalog(string id = BasicCatalog.Id)
+        {
+            if (!_catalogs.TryGetValue(id, out var catalog)) throw new InvalidOperationException("No catalog '" + id + "' is registered on this host");
+
+            if (_ownedCatalogs.Add(id))
+            {
+                catalog = catalog.Clone();
+                _catalogs[id] = catalog;
+            }
+
+            return catalog;
+        }
+
+        /// <summary>
+        /// Starts a new catalog from an existing one (the basic catalog by default) under a new id: everything the base has, to be
+        /// changed or added to. A surface names the new id as its <c>catalogId</c>.
+        /// </summary>
+        public Catalog Extend(string newId, string baseId = BasicCatalog.Id)
+        {
+            if (!_catalogs.TryGetValue(baseId, out var baseCatalog)) throw new InvalidOperationException("No catalog '" + baseId + "' is registered on this host");
+
+            var extended = baseCatalog.Clone(newId);
+            _catalogs[newId] = extended;
+            _ownedCatalogs.Add(newId);
+            return extended;
+        }
+
+        /// <summary>Replaces a component of a catalog (the basic one by default) on this host only.</summary>
+        public A2UIHost Override(string type, Func<ComponentContext, Tesserae.IComponent> factory, string catalogId = BasicCatalog.Id)
+        {
+            OwnCatalog(catalogId).Component(type, factory);
+            return this;
+        }
+
+        /// <summary>Wraps a component of a catalog (the basic one by default) on this host only; see <c>Catalog.Decorate</c>.</summary>
+        public A2UIHost Decorate(string type, Func<ComponentContext, Func<Tesserae.IComponent>, Tesserae.IComponent> wrap, string catalogId = BasicCatalog.Id)
+        {
+            OwnCatalog(catalogId).Decorate(type, wrap);
+            return this;
+        }
+
+        /// <summary>Replaces a function of a catalog (the basic one by default) on this host only.</summary>
+        public A2UIHost OverrideFunction(string name, Func<EvalContext, JsonValue, JsonValue> implementation, string catalogId = BasicCatalog.Id)
+        {
+            OwnCatalog(catalogId).Function(name, implementation);
             return this;
         }
 

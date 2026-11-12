@@ -247,9 +247,21 @@ function (the default, so every basic-catalog function) or a user-gesture one su
 
             host.RegisterCatalog(stars);
 
+            // Changing a component of the basic catalog changes it on this host only: the first change copies the shared catalog.
+            host.Override("Divider", cx => HorizontalSeparator("✦ replaced Divider ✦").Primary())
+                .Decorate("Button", (cx, inner) =>
+                {
+                    var button = inner();                                   // the basic Button, bindings and action included
+                    button.Render().setAttribute("data-decorated", "true");
+                    return button;
+                });
+
             host.Process(J(@"[{'version':'1.0','createSurface':{'surfaceId':'custom','catalogId':'" + BASIC + @"','dataModel':{'stars':3,'name':'tesserae'},'components':[
                 {'id':'root','component':'Card','child':'col'},
-                {'id':'col','component':'Column','children':['t','rate','shown','shout']},
+                {'id':'col','component':'Column','children':['t','rate','shown','shout','div','btn']},
+                {'id':'div','component':'Divider'},
+                {'id':'btn_l','component':'Text','text':'A decorated Button'},
+                {'id':'btn','component':'Button','child':'btn_l','action':{'event':{'name':'decorated'}}},
                 {'id':'t','component':'Text','text':'A basic Card and Text around a component from another catalog'},
                 {'id':'rate','component':'Rating','@catalogId':'" + Weather + @"','max':5,'value':{'@path':'/stars'}},
                 {'id':'shown','component':'Text','text':{'@call':'formatString','args':{'value':'You rated it ${/stars} of 5'}}},
@@ -267,10 +279,18 @@ var catalog = new Catalog(""https://example.com/catalogs/stars/1.0"")
                                    r.OnChange(v => cx.WriteBack(""value"", JsonValue.Number(v))); return r; })
     .Function(""shout"", (ec, args) => JsonValue.String(Coerce.ToText(args.Get(""value"")).ToUpperInvariant() + ""!""));
 host.RegisterCatalog(catalog);
+
+// Changing the basic catalog, on this host only (the shared catalog is copied the first time):
+host.Override(""Divider"", cx => HorizontalSeparator(""replaced"").Primary());            // replace a component
+host.Decorate(""Button"", (cx, inner) => { var b = inner(); /* add to it */ return b; });   // wrap the original
+host.OverrideFunction(""formatCurrency"", (ec, args) => JsonValue.String(""..."") );      // replace a function
+var mine = host.Extend(""https://example.com/catalogs/mine/1.0"");                       // a new catalog id, starting from the basic one
 ```
 
 Nothing is declared on the components themselves: the host finds the catalog by id, and the context helpers (`Bind`, `WriteBack`, `Child`, `Children`, `BindChecks`,
-`RunAction`) give a component bindings, two-way data, children and validation without knowing how any of them work.",
+`RunAction`) give a component bindings, two-way data, children and validation without knowing how any of them work.
+
+The basic catalog can be changed too, per host: `Override` replaces a component, `Decorate` wraps the original (this page replaces the Divider and tags the Button), `OverrideFunction` replaces a function, and `Extend` starts a catalog under a new id from the basic one. The first change copies the shared catalog, so no other host is touched.",
                 Guide.Live(host, inspector));
         }
 

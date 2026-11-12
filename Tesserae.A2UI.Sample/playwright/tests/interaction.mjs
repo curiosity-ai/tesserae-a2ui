@@ -186,4 +186,24 @@ export async function run({ browser, base, suite, L }) {
       await page.locator('.a2ui-outbound', { hasText: "Function 'openUrl'" }).first().waitFor({ timeout: 3000 });
     } finally { await page.__ctx.close(); }
   });
+
+  await suite.test('overriding and decorating the basic catalog changes this host only', async () => {
+    const page = await L.open(browser, base, 'Custom Catalog');
+    try {
+      const stage = page.locator('.a2ui-surface');
+      await stage.getByText('replaced Divider').waitFor({ timeout: 3000 });
+      L.assert(await stage.locator('[data-a2ui-component="Divider"][data-decorated]').count() === 0, 'a Divider is not a Button');
+      const button = stage.locator('[data-a2ui-component="Button"][data-decorated="true"]');
+      L.assert(await button.count() === 1, 'the decorated Button should carry data-decorated');
+      await button.click();
+      await page.getByRole('tab', { name: 'To agent', exact: true }).click();
+      await page.locator('.a2ui-outbound', { hasText: 'decorated' }).first().waitFor({ timeout: 3000 });   // the original's action still runs
+      // another host on another page still has the basic Divider and Button
+      const other = await L.open(browser, base, 'Showcase');
+      try {
+        L.assert(await other.getByText('replaced Divider').count() === 0, 'the override leaked into another host');
+        L.assert(await other.locator('[data-decorated]').count() === 0, 'the decoration leaked into another host');
+      } finally { await other.__ctx.close(); }
+    } finally { await page.__ctx.close(); }
+  });
 }
