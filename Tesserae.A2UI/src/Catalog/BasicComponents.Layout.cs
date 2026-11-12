@@ -34,6 +34,45 @@ namespace Tesserae.A2UI
             }
         }
 
+
+        // ------------------------------------------------------------------ labelled fields
+
+        private static int _fieldIds;
+
+        /// <summary>
+        /// A control with its <c>label</c> above it, for every input that has one.
+        /// </summary>
+        /// <remarks>
+        /// Not Tesserae's <c>Label</c>: its stylesheet takes the top margin off the first stack item (a rule for vertical stacks), so the first of two
+        /// fields in a Row sat 4px higher than the second, and it insets the label text by its own margin, so the label did not line up with the box
+        /// under it. This is the label, the control, a 4px gap and one outer margin, whatever the position.
+        /// </remarks>
+        private static IComponent Labelled(ComponentContext cx, IComponent control)
+        {
+            if (cx.Prop("label") is null) return control;
+
+            var text = document.createElement("label");
+            text.style.fontWeight = "600";
+            text.style.margin     = "0";
+            text.style.minWidth   = "0";
+            cx.BindString("label", s => text.textContent = s);
+
+            var element = control.Render();
+            element.style.margin = "0";
+
+            //The label is the field's name for assistive technology and a click on it focuses the field.
+            var input = element.querySelector("input,textarea,select") as HTMLElement;
+            if (input is object)
+            {
+                if (string.IsNullOrEmpty(input.id)) input.id = "a2ui-field-" + (++_fieldIds);
+                text.setAttribute("for", input.id);
+            }
+
+            var wrapper = VStack().Gap(4.px()).Children(Raw(text), control);
+            wrapper.Render().style.minWidth = "0";
+            return wrapper;
+        }
+
         // ------------------------------------------------------------------ Row / Column
 
         public static IComponent Linear(ComponentContext cx, Stack.Orientation orientation)
@@ -43,6 +82,10 @@ namespace Tesserae.A2UI
 
             var align = Align(cx.Literal("align", "stretch"));
             if (align.HasValue) stack.AlignItems(align.Value);
+
+            //A row that does not say how to align its children stretches them, as the catalog says - and a label, an icon or a button stretched
+            //to the height of its tallest neighbour sits at the top of that cell. Those are centred; boxes (columns, cards, fields) still stretch.
+            if (orientation == Stack.Orientation.Horizontal && !cx.Has("align")) stack.Render().classList.add("a2ui-row-auto");
 
             var justify = Justify(cx.Literal("justify", "start"));
             if (justify.HasValue) stack.JustifyContent(justify.Value);

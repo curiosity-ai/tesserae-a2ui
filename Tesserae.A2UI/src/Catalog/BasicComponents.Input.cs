@@ -44,6 +44,10 @@ namespace Tesserae.A2UI
             var el = button.Render();
             el.setAttribute("type", "button");
 
+            //Tesserae's default button is flat, which next to a primary one reads as plain text. The catalog's default variant is the secondary
+            //action, so it gets the outline of one.
+            if (variant == "default") el.style.border = "1px solid var(--tss-default-border-color, rgba(128,128,128,0.4))";
+
             cx.BindChecks(failures =>
             {
                 button.Disabled(failures.Count > 0);
@@ -153,12 +157,7 @@ namespace Tesserae.A2UI
             onInput(() => { touched = true; showError(); });
             cx.BindChecks(failures => { failing = failures; showError(); });
 
-            var label = cx.Prop("label");
-            if (label is null) return control;
-
-            var l = Label("").SetContent(control);
-            cx.BindString("label", s => l.Text = s);
-            return l;
+            return Labelled(cx, control);
         }
 
         // ------------------------------------------------------------------ CheckBox
@@ -228,16 +227,11 @@ namespace Tesserae.A2UI
 
             var row = HStack().AlignItemsCenter().Gap(GapPx.px()).Children(slider.Grow(), readout);
 
-            var labelProp = cx.Prop("label");
-            IComponent control = row;
-            if (labelProp is object)
-            {
-                var l = Label("").SetContent(row);
-                cx.BindString("label", s => l.Text = s);
-                control = l;
-            }
+            //In a column that centres its children the row is as wide as its content, which for a slider is nothing: it needs a width of its own.
+            row.Render().style.width    = "100%";
+            row.Render().style.minWidth = "160px";
 
-            return WithChecks(cx, control);
+            return WithChecks(cx, Labelled(cx, row));
         }
 
         // ------------------------------------------------------------------ DateTimeInput
@@ -307,14 +301,7 @@ namespace Tesserae.A2UI
                 cx.WriteBack("value", JsonValue.String(get()));
             });
 
-            if (cx.Prop("label") is JsonValue)
-            {
-                var l = Label("").SetContent(control);
-                cx.BindString("label", s => l.Text = s);
-                control = l;
-            }
-
-            return WithChecks(cx, control);
+            return WithChecks(cx, Labelled(cx, control));
         }
 
         /// <summary>ISO 8601 text to what the native input takes.</summary>
