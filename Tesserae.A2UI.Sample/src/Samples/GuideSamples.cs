@@ -334,7 +334,7 @@ FlintChartCatalog.AddTo(host);        // host.RegisterCatalog(FlintChartCatalog.
 ```
 
 ```json
-{ ""id"": ""chart"", ""component"": ""FlintChart"", ""@catalogId"": ""https://tesserae.dev/a2ui/catalogs/flint-chart/1.0"",
+{ ""id"": ""chart"", ""component"": ""FlintChart"", ""@catalogId"": ""https://curiosity.ai/a2ui/catalogs/flint-chart/1.0"",
   ""chartType"": ""Bar Chart"", ""data"": { ""@path"": ""/sales"" },
   ""encodings"": { ""x"": ""Product"", ""y"": ""Sales"" }, ""semanticTypes"": { ""Sales"": ""Amount"" },
   ""title"": ""Sales per product"", ""height"": 260 }
