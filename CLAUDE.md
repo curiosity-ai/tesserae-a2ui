@@ -10,7 +10,7 @@ no JavaScript of its own.
 
 ```
 .reference/                         the upstream a2ui repository, moved here unmodified (spec, catalogs, examples, other renderers).
-                                    Read it, do not edit it. Its GitHub workflows are renamed *.disabled and must stay that way.
+                                    Read it, do not edit it. Its GitHub workflows and every other `.yml` file are renamed `*.yml.disabled` and must stay that way.
 Tesserae.A2UI/                      the package
   src/Json/JsonValue.cs             typed JSON (parse, serialise, deep equality). "undefined" is a C# null, JSON null is JsonValue.Null
   src/Protocol/                     A2UIMessage (agent -> renderer, parsed), A2UIAction / A2UIError (renderer -> agent)
