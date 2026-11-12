@@ -14,18 +14,11 @@ namespace Tesserae.A2UI
     {
         public const string Id = "https://curiosity.ai/a2ui/catalogs/flint-chart/1.0";
 
-        /// <summary>The id the extension was first published under; <see cref="AddTo"/> still answers to it, so an interface written with it keeps drawing.</summary>
-        public const string LegacyId = "https://tesserae.dev/a2ui/catalogs/flint-chart/1.0";
-
         /// <summary>A catalog holding the FlintChart component, ready for <see cref="A2UIHost.RegisterCatalog"/>.</summary>
         public static Catalog Create() => new Catalog(Id).Component("FlintChart", FlintChartComponent);
 
-        /// <summary>Registers the extension on a host under <see cref="Id"/> and <see cref="LegacyId"/>.</summary>
-        public static A2UIHost AddTo(A2UIHost host)
-        {
-            var catalog = Create();
-            return host.RegisterCatalog(catalog).RegisterCatalog(catalog.Clone(LegacyId));
-        }
+        /// <summary>Registers the extension on a host (or its private copy of the catalogs).</summary>
+        public static A2UIHost AddTo(A2UIHost host) => host.RegisterCatalog(Create());
 
         /// <summary>
         /// Properties: <c>chartType</c> (Flint's name, "Bar Chart", "Line Chart", "Donut Chart"...), <c>data</c> (a list of row objects, bindable:
