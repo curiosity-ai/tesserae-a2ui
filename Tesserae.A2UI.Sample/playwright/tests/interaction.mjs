@@ -187,7 +187,7 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
-  await suite.test('overriding and decorating the basic catalog changes this host only', async () => {
+  await suite.test('a host-owned catalog copy (OwnCatalog) can override and decorate without touching other hosts', async () => {
     const page = await L.open(browser, base, 'Custom Catalog');
     try {
       const stage = page.locator('.a2ui-surface');

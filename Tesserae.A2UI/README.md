@@ -86,17 +86,23 @@ host.RegisterCatalog(stars);   // a component then says "@catalogId": "https://e
 
 ### Changing the basic catalog
 
-A host can replace or wrap what the basic catalog does without touching any other host: the first change copies the shared catalog.
+`Override`, `Decorate` and `OverrideFunction` change the basic catalog, which is one shared instance, so they apply to every host:
 
 ```csharp
 host.Override("Divider", cx => HorizontalSeparator("replaced").Primary());               // replace a component
 host.Decorate("Button", (cx, inner) => { var b = inner(); /* add to it */ return b; });  // wrap the original: bindings, checks and action stay
 host.OverrideFunction("formatCurrency", (ec, args) => JsonValue.String("..."));          // replace a function
+```
+
+To change it for one host only, work on that host's own copy; to add a catalog id that starts from an existing one, `Extend`:
+
+```csharp
+host.OwnCatalog().Component("Divider", cx => /* ... */ null);                            // a private copy, changed
 var mine = host.Extend("https://example.com/catalogs/mine/1.0");                         // a new catalog id, starting from the basic one
 mine.Component("Chart", cx => /* ... */ null);                                           // and add to it
 ```
 
-`Catalog` itself has `Component`, `Function`, `Decorate`, `DecorateFunction` and `Clone(newId)` for building a catalog away from a host. `host.OwnCatalog(id)` returns the host's own copy of a registered catalog.
+`Catalog` itself has `Component`, `Function`, `Decorate`, `DecorateFunction` and `Clone(newId)` for building a catalog away from a host.
 
 `ComponentContext` is what a factory is handed: `Bind` / `BindString` / `BindBool` (live properties), `Watch` (rebuild on change), `WriteBack`
 (two-way), `Child(id)` / `Children(stack)` (children, templates, progressive rendering), `BindChecks` (validation), `RunAction` (agent events and local

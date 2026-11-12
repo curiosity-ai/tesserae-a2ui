@@ -3,7 +3,7 @@
 Running list of what is not done or is rough. Nothing here is hidden by a green test.
 
 ## Requires an unpublished Tesserae
-- `Video`, `AudioPlayer` and a vertical `Divider` use `Tesserae.VideoPlayer`, `AudioPlayer` and `VerticalSeparator`, which are in Tesserae after 2026.11.73499. Bump the Tesserae version in both csprojs once a build containing them is published (the themes pin follows).
+- `Video`, `AudioPlayer` and a vertical `Divider` use `Tesserae.VideoPlayer`, `AudioPlayer` and `VerticalSeparator`, which are in Tesserae from 2026.11.73511. Bump the Tesserae version in both csprojs once a build containing them is published (the themes pin follows).
 
 ## Protocol
 - v0.9 / v0.9.1 / v0.8 messages are not accepted (a message must be v1.0 shaped; `version` is not enforced).

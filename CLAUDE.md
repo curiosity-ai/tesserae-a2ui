@@ -37,8 +37,8 @@ dotnet build Tesserae.A2UI.slnx                    # Debug: one readable bundle;
 
 Versions follow tesserae-3d: `Transpose.Build.Target/26.8.4125` SDK, `LangVersion` 7.2 (Transpose's C# subset: no switch expressions, no
 records, no `?.` on delegates, no `string.CompareOrdinal`, no `NumberStyles`; `x is object y` types `y` as `object`, write `x is JsonValue y`),
-`Transpose.BCL` / `Core` and `Tesserae` as NuGet packages. Tesserae is **2026.11.73499**, not tesserae-3d's older one, because the sample uses `JsonViewer`;
-the themes must be the same build number (`26.11.73499`; a newer Tesserae than its themes has no matching set on NuGet).
+`Transpose.BCL` / `Core` and `Tesserae` as NuGet packages. Tesserae is **2026.11.73511**, not tesserae-3d's older one, because the sample uses `JsonViewer`;
+the themes must be the same build number (`26.11.73511`; a newer Tesserae than its themes has no matching set on NuGet).
 Zero build warnings. Type safety: no `dynamic`; JSON is `JsonValue`, never an untyped JavaScript object.
 
 The package is built as modules and its chunks defer (`tps.json`: `outputBy: Module`, `loadCompiledOutput: false`, `IsPackable`): a consumer
@@ -59,7 +59,9 @@ loads the entry itself first, `await Transpose.Require.RequireAsync(Transpose.Re
   assigning, because Tesserae's `Text`/`IsChecked` setters raise their change event.
 - **Templates** (`children: {componentId, path}`) subscribe to the list and rebuild only when its **length** changes; items bind to their own paths, so typing in a
   field inside a template never rebuilds the list.
-- **A catalog the host started with is shared and never mutated.** `A2UIHost` starts with `BasicCatalog.Instance`; `OwnCatalog` (behind `Override`, `Decorate`, `OverrideFunction`) clones it the first time it is changed, and `RegisterCatalog` / `Extend` mark a catalog as the host's own. Never change `BasicCatalog.Instance` from code that serves one host.
+- **The basic catalog is one shared instance, and overriding it is global on purpose.** `A2UIHost` starts with `BasicCatalog.Instance`; `Override`, `Decorate` and `OverrideFunction`
+  change the registered catalog itself, for every host. `OwnCatalog` clones it the first time it is asked for, and `RegisterCatalog` / `Extend` mark a catalog as the host's own,
+  for a change that must stay on one host. Code that serves several pages of one app (the gallery) uses `OwnCatalog`, or changing it on one page changes it on all.
 - **Catalogs resolve strictly**: a component's `@catalogId`, else the surface's `catalogId`, else an error (no fallback unless `A2UIHost.FallbackCatalog`).
   Functions are `rendererOnly` by default; the agent may call only `agentOnly` / `rendererOrAgent` ones; `requiresUserActivation` functions run only in an action.
 - **Everything the renderer cannot do is a protocol error, not an exception**: `A2UIHost.Report` dedupes, raises `OnError` and sends the envelope to the agent.

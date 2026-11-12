@@ -42,7 +42,7 @@ namespace Tesserae.A2UI
             _root.style.flexDirection = "column";
             _root.style.gap = "16px";
 
-            _catalogs[BasicCatalog.Id] = BasicCatalog.Instance;   // shared: copied the first time this host changes it (OwnCatalog)
+            _catalogs[BasicCatalog.Id] = BasicCatalog.Instance;   // shared across hosts: Override changes it for all of them, OwnCatalog gives this host a private copy
         }
 
         // ------------------------------------------------------------------ catalogs
@@ -59,7 +59,7 @@ namespace Tesserae.A2UI
 
         /// <summary>
         /// The catalog registered under <paramref name="id"/>, as this host's own copy: a catalog the host started with (the shared basic
-        /// catalog) is copied the first time it is changed, so a change here never reaches another host.
+        /// catalog) is copied the first time this is called, so a change to the copy never reaches another host.
         /// </summary>
         public Catalog OwnCatalog(string id = BasicCatalog.Id)
         {
@@ -88,25 +88,35 @@ namespace Tesserae.A2UI
             return extended;
         }
 
-        /// <summary>Replaces a component of a catalog (the basic one by default) on this host only.</summary>
+        /// <summary>
+        /// Replaces a component of a catalog (the basic one by default). This changes the registered catalog itself, so it is global:
+        /// the shared <see cref="BasicCatalog.Instance"/> changes for every host that uses it. For a change that must stay on this host,
+        /// use <see cref="OwnCatalog"/> first and change the copy it returns.
+        /// </summary>
         public A2UIHost Override(string type, Func<ComponentContext, Tesserae.IComponent> factory, string catalogId = BasicCatalog.Id)
         {
-            OwnCatalog(catalogId).Component(type, factory);
+            Registered(catalogId).Component(type, factory);
             return this;
         }
 
-        /// <summary>Wraps a component of a catalog (the basic one by default) on this host only; see <c>Catalog.Decorate</c>.</summary>
+        /// <summary>Wraps a component of a catalog (the basic one by default), globally like <see cref="Override"/>; see <c>Catalog.Decorate</c>.</summary>
         public A2UIHost Decorate(string type, Func<ComponentContext, Func<Tesserae.IComponent>, Tesserae.IComponent> wrap, string catalogId = BasicCatalog.Id)
         {
-            OwnCatalog(catalogId).Decorate(type, wrap);
+            Registered(catalogId).Decorate(type, wrap);
             return this;
         }
 
-        /// <summary>Replaces a function of a catalog (the basic one by default) on this host only.</summary>
+        /// <summary>Replaces a function of a catalog (the basic one by default), globally like <see cref="Override"/>.</summary>
         public A2UIHost OverrideFunction(string name, Func<EvalContext, JsonValue, JsonValue> implementation, string catalogId = BasicCatalog.Id)
         {
-            OwnCatalog(catalogId).Function(name, implementation);
+            Registered(catalogId).Function(name, implementation);
             return this;
+        }
+
+        private Catalog Registered(string id)
+        {
+            if (!_catalogs.TryGetValue(id, out var catalog)) throw new InvalidOperationException("No catalog '" + id + "' is registered on this host");
+            return catalog;
         }
 
         public Catalog ResolveCatalog(string id)

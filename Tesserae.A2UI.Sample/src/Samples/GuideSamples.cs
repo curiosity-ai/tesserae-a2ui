@@ -247,9 +247,11 @@ function (the default, so every basic-catalog function) or a user-gesture one su
 
             host.RegisterCatalog(stars);
 
-            // Changing a component of the basic catalog changes it on this host only: the first change copies the shared catalog.
-            host.Override("Divider", cx => HorizontalSeparator("✦ replaced Divider ✦").Primary())
-                .Decorate("Button", (cx, inner) =>
+            // The page changes its own copy of the basic catalog (OwnCatalog): host.Override / Decorate change the shared one for every host,
+            // which would change every other page of this gallery.
+            host.OwnCatalog()
+               .Component("Divider", cx => HorizontalSeparator("✦ replaced Divider ✦").Primary())
+               .Decorate("Button", (cx, inner) =>
                 {
                     var button = inner();                                   // the basic Button, bindings and action included
                     button.Render().setAttribute("data-decorated", "true");
@@ -280,17 +282,20 @@ var catalog = new Catalog(""https://example.com/catalogs/stars/1.0"")
     .Function(""shout"", (ec, args) => JsonValue.String(Coerce.ToText(args.Get(""value"")).ToUpperInvariant() + ""!""));
 host.RegisterCatalog(catalog);
 
-// Changing the basic catalog, on this host only (the shared catalog is copied the first time):
+// Changing the basic catalog for every host (it is one shared instance):
 host.Override(""Divider"", cx => HorizontalSeparator(""replaced"").Primary());            // replace a component
 host.Decorate(""Button"", (cx, inner) => { var b = inner(); /* add to it */ return b; });   // wrap the original
 host.OverrideFunction(""formatCurrency"", (ec, args) => JsonValue.String(""..."") );      // replace a function
+
+// Or for one host only: change its own copy.
+host.OwnCatalog().Component(""Divider"", cx => HorizontalSeparator(""replaced"").Primary());
 var mine = host.Extend(""https://example.com/catalogs/mine/1.0"");                       // a new catalog id, starting from the basic one
 ```
 
 Nothing is declared on the components themselves: the host finds the catalog by id, and the context helpers (`Bind`, `WriteBack`, `Child`, `Children`, `BindChecks`,
 `RunAction`) give a component bindings, two-way data, children and validation without knowing how any of them work.
 
-The basic catalog can be changed too, per host: `Override` replaces a component, `Decorate` wraps the original (this page replaces the Divider and tags the Button), `OverrideFunction` replaces a function, and `Extend` starts a catalog under a new id from the basic one. The first change copies the shared catalog, so no other host is touched.",
+The basic catalog can be changed too. `Override` replaces a component, `Decorate` wraps the original and `OverrideFunction` replaces a function: these change the shared basic catalog, so they apply to every host. `OwnCatalog()` gives one host a private copy to change instead (this page replaces the Divider and tags the Button that way, so the other pages of the gallery are untouched), and `Extend` starts a catalog under a new id from an existing one.",
                 Guide.Live(host, inspector));
         }
 
