@@ -88,15 +88,15 @@ namespace Tesserae.A2UI.Sample
 
                 {'id':'media_card','component':'Card','child':'media'},
                 {'id':'media','component':'Column','children':['video','audio','modal']},
-                {'id':'video','component':'Video','url':'https://example.com/clip.mp4'},
-                {'id':'audio','component':'AudioPlayer','url':'https://example.com/song.mp3','description':'A song'},
+                {'id':'video','component':'Video','url':'assets/media/sample-video.webm'},
+                {'id':'audio','component':'AudioPlayer','url':'assets/media/sample-audio.wav','description':'A song'},
                 {'id':'modal','component':'Modal','trigger':'modal_open','content':'modal_body'},
                 {'id':'modal_open_l','component':'Text','text':'Open a modal'},{'id':'modal_open','component':'Button','child':'modal_open_l','action':{'event':{'name':'open'}}},
                 {'id':'modal_body','component':'Column','children':['mb1','mb2']},{'id':'mb1','component':'Text','text':'## A modal'},{'id':'mb2','component':'Text','text':'Its content is any component.'}
               ]}}]"));
 
             _content = Guide.Page("Component showcase", UIcons.LayoutFluid, "Every basic-catalog component on one surface", "ShowcaseSample.cs",
-"All eighteen components of the A2UI basic catalog, each drawn with the Tesserae component that does the job: **Text** (Markdown), **Image**, **Icon**, **Row**, **Column**, **List**, **Card**, **Tabs**, **Divider**, **Modal**, **Button**, **CheckBox**, **TextField** (short, long, number, obscured), **DateTimeInput** (date, time, both), **ChoicePicker** (radio, checkbox, chips, filterable), **Slider**, and the two media components that have no Tesserae counterpart yet. This page is what the theme matrix of the test suite captures.",
+"All eighteen components of the A2UI basic catalog, each drawn with the Tesserae component that does the job: **Text** (Markdown), **Image**, **Icon**, **Row**, **Column**, **List**, **Card**, **Tabs**, **Divider**, **Modal**, **Button**, **CheckBox**, **TextField** (short, long, number, obscured), **DateTimeInput** (date, time, both), **ChoicePicker** (radio, checkbox, chips, filterable), **Slider**, and the two media components, **Video** and **AudioPlayer**. This page is what the theme matrix of the test suite captures.",
                 Card(VStack().WS().Padding(8.px()).Children(host.WS())).SetTitle("Rendered by Tesserae.A2UI"));
         }
 

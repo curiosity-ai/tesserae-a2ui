@@ -62,7 +62,8 @@ MountToBody(host.S());                                         // a host is an o
 | `DateTimeInput` | `DatePicker`, `TimePicker`, `DateTimePicker`; ISO 8601 in the data model |
 | `ChoicePicker` | `ChoiceGroup` (one), `CheckBox`es (several), `ToggleButton` chips, an optional filter box |
 | `Slider` | `Slider`, mapped onto whole steps so decimal ranges work |
-| `Video`, `AudioPlayer` | **no Tesserae component yet**: a labelled placeholder naming the media (see TODO) |
+| `Video` | `VideoPlayer` (native controls, poster); URL rules as for images |
+| `AudioPlayer` | `AudioPlayer` (waveform seek bar, native-controls fallback); `description` is its accessible name |
 
 Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatNumber` `formatCurrency` `formatDate` (Unicode TR35 patterns)
 `pluralize` `openUrl` (user gesture only, http/https only) `and` `or` `not`, and the system function `@index`.

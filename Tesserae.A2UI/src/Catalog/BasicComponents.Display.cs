@@ -135,24 +135,41 @@ namespace Tesserae.A2UI
             return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='currentColor' aria-hidden='true' data-a2ui-icon='svg'><path d='" + path + "'/></svg>";
         }
 
-        // ------------------------------------------------------------------ Media with no Tesserae component yet
+        // ------------------------------------------------------------------ Video and AudioPlayer
 
-        public static IComponent Video(ComponentContext cx) => Unavailable(cx, UIcons.Play, "Video");
-
-        public static IComponent AudioPlayer(ComponentContext cx) => Unavailable(cx, UIcons.Volume, "AudioPlayer");
-
-        /// <summary>
-        /// Tesserae has no video or audio component, so these two draw a labelled placeholder naming the media instead of
-        /// the player (see TODO.md). The URL is shown only when it passes the media URL rules.
-        /// </summary>
-        private static IComponent Unavailable(ComponentContext cx, UIcons icon, string kind)
+        public static IComponent Video(ComponentContext cx)
         {
-            var msg = Message(kind, "");
-            msg.Icon(icon);
-            var el = msg.Render();
-            el.setAttribute("data-a2ui-unavailable", kind);
-            cx.BindString("url", u => msg.Text(MediaUrl.IsSafe(u) ? u : "(no usable URL)"));
-            return msg;
+            var player = Tesserae.UI.VideoPlayer("");
+            var el = player.Render();
+            el.style.width = "100%";
+            el.style.display = "none";
+
+            cx.BindString("url", u =>
+            {
+                if (MediaUrl.IsSafe(u)) { el.style.display = ""; player.SetSource(u.Trim()); }
+                else { el.style.display = "none"; }
+            });
+
+            cx.BindString("posterUrl", u => { if (MediaUrl.IsSafe(u)) player.Poster(u.Trim()); });
+            return player;
+        }
+
+        public static IComponent AudioPlayer(ComponentContext cx)
+        {
+            var player = Tesserae.UI.AudioPlayer("");
+            var el = player.Render();
+            el.style.width = "100%";
+            el.style.display = "none";
+
+            cx.BindString("url", u =>
+            {
+                if (MediaUrl.IsSafe(u)) { el.style.display = ""; player.SetSource(u.Trim()); }
+                else { el.style.display = "none"; }
+            });
+
+            // The description is the player's accessible name; with none it keeps its default.
+            cx.BindString("description", d => { if (d.Length > 0) el.setAttribute("aria-label", d); else el.removeAttribute("aria-label"); });
+            return player;
         }
 
         // ------------------------------------------------------------------ Divider

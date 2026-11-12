@@ -36,8 +36,10 @@
   <Target Name="_CopySampleExamples" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
     <ItemGroup>
       <_SampleExamples Include="assets\examples\**\*" />
+      <_SampleMedia Include="assets\media\**\*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(_SampleExamples)" DestinationFiles="@(_SampleExamples->'$(OutDir)tps\assets\examples\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_SampleMedia)" DestinationFiles="@(_SampleMedia->'$(OutDir)tps\assets\media\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 </Project>

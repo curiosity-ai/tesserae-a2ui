@@ -70,8 +70,8 @@ children, validation and actions through `ComponentContext` alone, registered on
 
 ## Where Tesserae has no matching component
 
-**Stop and report before implementing one** (the maintainer asked for this). Today that is `Video`, `AudioPlayer` and a vertical `Divider`; the renderer draws a
-placeholder / a provisional rule and TODO.md says so. Do not draw native `<video>`/`<audio>` in this package without a decision.
+**Stop and report before implementing one** (the maintainer asked for this). Today that is a vertical `Divider` only; the renderer draws a provisional rule and TODO.md says so.
+`Video` and `AudioPlayer` were gaps too and now live in Tesserae itself (`VideoPlayer`, `AudioPlayer`, moved from mosaik): this package maps onto them.
 
 ## The sample gallery and its data
 
