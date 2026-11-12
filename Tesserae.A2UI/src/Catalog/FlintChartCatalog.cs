@@ -7,18 +7,25 @@ namespace Tesserae.A2UI
     /// <summary>
     /// An extension catalog with one component, <c>FlintChart</c>, drawn with Tesserae's <see cref="Tesserae.FlintChart"/> (Microsoft's Flint over Vega-Lite).
     /// A surface mixes it with the basic catalog the way any second catalog is mixed: the component names it with <c>@catalogId</c>.
-    /// <code>{ "id": "c", "component": "FlintChart", "@catalogId": "https://tesserae.dev/a2ui/catalogs/flint-chart/1.0",
+    /// <code>{ "id": "c", "component": "FlintChart", "@catalogId": "https://curiosity.ai/a2ui/catalogs/flint-chart/1.0",
     ///         "chartType": "Bar Chart", "data": { "@path": "/_tools/q/value" }, "encodings": { "x": "Type", "y": "Count" } }</code>
     /// </summary>
     public static class FlintChartCatalog
     {
-        public const string Id = "https://tesserae.dev/a2ui/catalogs/flint-chart/1.0";
+        public const string Id = "https://curiosity.ai/a2ui/catalogs/flint-chart/1.0";
+
+        /// <summary>The id the extension was first published under; <see cref="AddTo"/> still answers to it, so an interface written with it keeps drawing.</summary>
+        public const string LegacyId = "https://tesserae.dev/a2ui/catalogs/flint-chart/1.0";
 
         /// <summary>A catalog holding the FlintChart component, ready for <see cref="A2UIHost.RegisterCatalog"/>.</summary>
         public static Catalog Create() => new Catalog(Id).Component("FlintChart", FlintChartComponent);
 
-        /// <summary>Registers the extension on a host (or its private copy of the catalogs).</summary>
-        public static A2UIHost AddTo(A2UIHost host) => host.RegisterCatalog(Create());
+        /// <summary>Registers the extension on a host under <see cref="Id"/> and <see cref="LegacyId"/>.</summary>
+        public static A2UIHost AddTo(A2UIHost host)
+        {
+            var catalog = Create();
+            return host.RegisterCatalog(catalog).RegisterCatalog(catalog.Clone(LegacyId));
+        }
 
         /// <summary>
         /// Properties: <c>chartType</c> (Flint's name, "Bar Chart", "Line Chart", "Donut Chart"...), <c>data</c> (a list of row objects, bindable:
@@ -97,7 +104,11 @@ namespace Tesserae.A2UI
 
             if (cx.Has("height")) chart.FillHeight().H(((int)cx.Num("height", 320)).px());
 
-            chart.OnError(message => cx.Report("INVALID_CHART", "FlintChart '" + cx.Id + "': " + message));
+            // The chart is mounted before a bound list has arrived (a tool still running), and Flint says it has no rows; that is waiting, not an error.
+            chart.OnError(message =>
+            {
+                if (rows is object && rows.IsArray && rows.Count > 0) cx.Report("INVALID_CHART", "FlintChart '" + cx.Id + "': " + message);
+            });
 
             if (cx.Has("selected") || cx.Has("action"))
             {
