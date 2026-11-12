@@ -1,0 +1,44 @@
+name: Playwright suite
+
+# Builds the sample (Debug, so the formatted bundles are used) and runs Tesserae.A2UI.Sample/playwright against it in Chromium with
+# SwiftShader (software WebGL). Screenshots are uploaded as an artifact.
+on:
+  pull_request:
+    paths:
+      - 'Tesserae.A2UI/**'
+      - 'Tesserae.A2UI.Sample/**'
+      - '.github/workflows/tests.yml'
+  workflow_dispatch: {}
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: 10.x
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      - name: Install the Transpose compiler
+        run: |
+          dotnet tool update --global Transpose.Compiler
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+      - name: Build the sample
+        run: dotnet build Tesserae.A2UI.Sample/Tesserae.A2UI.Sample.csproj -c Debug
+      - name: Install Playwright
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+        working-directory: Tesserae.A2UI.Sample/playwright
+      - name: Run the suite
+        run: npm test
+        working-directory: Tesserae.A2UI.Sample/playwright
+        env:
+          SCREENS_DIR: ${{ github.workspace }}/screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: screens

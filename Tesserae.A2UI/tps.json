@@ -1,0 +1,41 @@
+{
+    // One ES module per chunk plus an entry module, like every Tesserae/Curiosity front-end. The package is
+    // IsPackable, so tps publishes a chunk map and defers the chunks: an application that references this package
+    // but never renders an agent surface never fetches its JavaScript. A Debug build ignores this and emits one
+    // readable bundle.
+    "outputBy": "Module",
+
+    // Not scripted by the consuming application's index.html. The consumer fetches the entry itself, just before
+    // it needs it:
+    //
+    //     await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.A2UI.js");
+    //
+    // Until that call has run nothing in the Tesserae.A2UI namespace exists, so it has to come before the first
+    // reference to a type in this package.
+    "loadCompiledOutput": false,
+
+    // The reflection metadata rides inside the bundle: the entry is fetched as one file, and a sibling .meta.js
+    // it does not know to ask for would never arrive.
+    "reflection": { "target": "inline" },
+
+    "cleanOutputFolderBeforeBuildPattern": "*.*",
+    "loader": {
+        "type": "Global"
+    },
+    "generateTypeScript": false,
+    "generateDocumentation": "None",
+    "rules": {
+        "anonymousType": "Plain",
+        "arrayIndex": "Managed",
+        "autoProperty": "Plain",
+        "boxing": "Managed",
+        "externalCast": "Plain",
+        "inlineComment": "Plain",
+        "integer": "Managed",
+        "lambda": "Plain",
+        "useShortForms": true
+    },
+    "sourceMap": {
+        "enabled": false
+    }
+}

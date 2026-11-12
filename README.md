@@ -1,180 +1,110 @@
-# A2UI
+# tesserae-a2ui
 
-**Build delightful, fast, reliable agentic experiences**
+**Tesserae.A2UI** renders [A2UI](https://a2ui.org) (Agent-to-User Interface) v1.0 messages as a live
+[Tesserae](https://github.com/curiosity-ai/tesserae) user interface. An agent streams JSON (`createSurface`, `updateComponents`,
+`updateDataModel`, `deleteSurface`); the host keeps a real interface in step with it, two-way binds the user's input to a data model,
+and sends what the user does back as protocol messages. It is C# compiled to JavaScript with the Transpose compiler, depends on
+Tesserae only, and has no JavaScript of its own.
 
-A2UI (Agent-to-User Interface) is an open-source generative UI framework,
-complete with a protocol optimized for streaming dynamic user interfaces at
-low latency, native renderers for web and mobile frameworks, and agent SDKs
-in several popular languages. With A2UI, your agents can communicate with
-your users using natively rendered widgets, in addition to text.
+- **The protocol, all of v1.0**: surfaces, adjacency-list component trees that fill in progressively (a child can arrive after its parent),
+  `createSurface` with components and data model in one message, JSON Lines / array / single-envelope input, `callRendererFunction` /
+  `callAgentFunction` and their responses, `sendDataModel`, the protocol's error codes.
+- **A reactive data model**: JSON Pointer paths, upsert and delete semantics, relative paths and `@index` inside templates,
+  `formatString` with nested `${...}` expressions, and bindings that re-evaluate only when data they read changes.
+- **The basic catalog**: all 18 components drawn with Tesserae components (see the table) and all 14 functions, with `@checks` validation
+  (inputs show the first failing message once touched; a Button with a failing check is disabled), the A2UI regex dialect with its
+  backtracking safety check, media URL rules, accessibility attributes.
+- **Your own catalogs**: register components and functions under a catalog id, mix catalogs in one surface with `@catalogId`.
+- **A sample gallery** with every example from the A2UI specification drawn next to the messages that produce it, a playground, guides, and a
+  **Playwright suite** (every example, the interactions, 15 themes in light and dark).
 
-<img src="docs/public/assets/a2ui_gallery_examples.png" alt="Gallery of A2UI components" height="400">
+See [CLAUDE.md](CLAUDE.md) for how the repository works and [TODO.md](TODO.md) for what is not done. The upstream A2UI repository this was built
+against is kept, unmodified, in [`.reference/`](.reference/) (its CI is disabled there).
 
-_Examples of UI compositions that A2UI can express._
+## Use
 
-## Quick links
+```csharp
+// once, before the first use (the package's JavaScript is loaded on demand):
+await Transpose.Require.RequireAsync(Transpose.RequireKind.Module, "./Tesserae.A2UI.js");
 
-- [Main website](https://a2ui.org).
-- Try it in your browser using [A2UI Composer](https://a2ui-project.github.io/composer/).
-- [Supported renderers](https://a2ui.org/reference/renderers/).
-- [Supported agents](https://a2ui.org/reference/agents/).
-- [Protocol specification](https://a2ui.org/specification/v1.0-a2ui/).
+var host = new A2UIHost()
+    .OnAction(a => SendToAgent(a.ToEnvelope().ToJson()))       // the user pressed a Button with an action.event
+    .OnError(e => Log(e.ToString()));                          // anything the renderer could not do
 
-## Introduction
+host.Process(jsonlFromTheAgent);                               // JSON Lines, an array, or one envelope; call it again for every chunk
+MountToBody(host.S());                                         // a host is an ordinary Tesserae component
+```
 
-Large language models (LLMs) and decision models (e.g.
-[Jev](https://docs.typesafe.ai/)) excel at creating text and code and at making
-fast decisions on top of raw structured data (e.g. JSON). A2UI gives these
-models a specialized vocabulary for expressing user interfaces.
+| | |
+|---|---|
+| Input | `Process(string)` (any stream shape), `Process(JsonValue)`, `Process(A2UIMessage)`, `ProcessAsync(text, delayMs)` (replay a stream), `Clear()` |
+| Output | `OnAction(A2UIAction)` (resolved context, optional `DataModel` for `sendDataModel` surfaces), `OnMessage(envelope, metadata)` (every renderer-to-agent envelope), `OnError(A2UIError)`, `OnProcessed(message)` |
+| Surfaces | `Surfaces`, `GetSurface(id)`, `surface.Data` (a `DataModel`: `Get(path)`, `Set(path, value)`, `Changed`), `surface.GetComponent(id)` |
+| Catalogs | `RegisterCatalog(catalog)`, `FallbackCatalog`, `BasicCatalog.Instance` / `BasicCatalog.Create()` |
+| Agent functions | `CallAgentFunctionAsync(surface, name, catalogId, args)` sends `callAgentFunction` and awaits the agent's `agentFunctionResponse` (a function a catalog does not implement is routed here) |
 
-A2UI expresses UI using _data_, not code. A schema for the data exchanged
-between the agent and the renderer enforces strict capability boundaries for
-the agent, keeping agent-generated experiences safe and aligned with the
-business requirements of your application. A _core library_, a _native
-framework adapter_, and a _catalog of components_ provide access to native
-components and form the building blocks that the agent _composes_ into a final
-user experience, making the result expressive and high-performance.
+### Basic catalog
 
-## When to use A2UI
+| Component | Drawn with |
+|---|---|
+| `Text` | `MarkdownBlock` (no links or embedded content); `caption` variant |
+| `Image` | `Image` with the six variants and `fit`; URL rules (http, https, data, same-host relative) |
+| `Icon` | `Icon` with the 60 catalog names mapped onto `UIcons`; `{svgPath}` icons |
+| `Row`, `Column` | `Stack`; `justify`, `align`, `weight` (flex with a zero basis, so columns line up); static children or a template over the data model |
+| `List` | a scrolling `Stack`, vertical or horizontal |
+| `Card` | `Card` |
+| `Tabs` | `Pivot` |
+| `Divider` | `HorizontalSeparator`; the vertical axis is a provisional one-pixel rule (see TODO) |
+| `Modal` | `Modal` opened by the trigger |
+| `Button` | `Button` (`primary` / `borderless` variants; a Text or Icon child becomes its label or icon); `@checks` disable it |
+| `CheckBox` | `CheckBox` |
+| `TextField` | `TextBox` (short, number, obscured) / `TextArea` (long) |
+| `DateTimeInput` | `DatePicker`, `TimePicker`, `DateTimePicker`; ISO 8601 in the data model |
+| `ChoicePicker` | `ChoiceGroup` (one), `CheckBox`es (several), `ToggleButton` chips, an optional filter box |
+| `Slider` | `Slider`, mapped onto whole steps so decimal ranges work |
+| `Video`, `AudioPlayer` | **no Tesserae component yet**: a labelled placeholder naming the media (see TODO) |
 
-Use A2UI when any of the following apply to your application:
+Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatNumber` `formatCurrency` `formatDate` (Unicode TR35 patterns)
+`pluralize` `openUrl` (user gesture only, http/https only) `and` `or` `not`, and the system function `@index`.
 
-- Parts of your application are agent- and/or server-driven. By design, A2UI
-  supports remote rendering.
-- You want the UI to be composed dynamically, tailored to the user's immediate
-  need. Instead of making your users navigate through multiple screens to solve
-  their problems, have the agent build the right flow of UI that guides users
-  directly to solutions.
-- You need the highest performance and visual fidelity. A2UI renders UI using
-  the framework of your choice, typically one that the host app itself is
-  written in. WebViews or HTML are not required.
-- The same agent streams UI to multiple platforms or frameworks, such as
-  Flutter, React, SwiftUI, and Jetpack Compose. A2UI helps keep the user
-  experience compatible and consistent across all screens.
-- The agent is remote, third-party, or operates across a trust boundary. For
-  example, the agent must not be able to handle certain kinds of data (credit
-  card/account numbers, PII, financial data). A2UI helps enforce the trust
-  boundary and protect your app's critical functionality from hallucinations
-  using a strict schema, and by expressing UI using validated data rather than
-  executable code.
+### A custom catalog
 
-## A2UI core philosophy
+```csharp
+var stars = new Catalog("https://example.com/catalogs/stars/1.0")
+    .Component("Rating", cx =>
+    {
+        var rating = Rating(5);
+        cx.Bind("value", v => rating.SetValue((int)(Coerce.ToNumber(v) ?? 0)));          // model -> view, live
+        rating.OnChange(v => cx.WriteBack("value", JsonValue.Number(v)));                 // view -> model
+        return rating;
+    })
+    .Function("shout", (ec, args) => JsonValue.String(Coerce.ToText(args.Get("value")).ToUpperInvariant() + "!"));
 
-We develop A2UI under the guidance of the following core principles:
+host.RegisterCatalog(stars);   // a component then says "@catalogId": "https://example.com/catalogs/stars/1.0"
+```
 
-- **Security first**: The app developer controls what the agent can and cannot
-  do in the app. A2UI provides a framework for specifying and enforcing the
-  necessary guardrails, such as expressing UI as data, validating inputs and
-  outputs against a schema, and disallowing arbitrary executable code. Every
-  capability granted to the agent is either a safe standard capability built
-  into the framework, or a capability explicitly granted by the app developer.
-- **Model-friendly and server-driven**: The A2UI protocol is designed to be
-  efficiently generated by language and decision models and transported over
-  the network, and to support progressive rendering (or "streaming") for a
-  responsive user experience. An agent can adapt the UI based on where the user
-  takes the conversation. A2UI supports swappable inference formats, so you can
-  tailor inference to specific models and use cases.
-- **Native rendering and portability**: A2UI renders UI using the framework
-  native to your app, with renderers for many major UI frameworks. No need to
-  change frameworks unless required for other reasons.
+`ComponentContext` is what a factory is handed: `Bind` / `BindString` / `BindBool` (live properties), `Watch` (rebuild on change), `WriteBack`
+(two-way), `Child(id)` / `Children(stack)` (children, templates, progressive rendering), `BindChecks` (validation), `RunAction` (agent events and local
+functions). Everything it creates is released when the component is rebuilt or removed.
 
-## Architecture
+## Build and run
 
-A2UI's architecture is made of multiple layers spanning the full stack that
-connects the agent to the application:
+```bash
+dotnet tool update --global Transpose.Compiler
+export PATH="$PATH:$HOME/.dotnet/tools"
+dotnet build Tesserae.A2UI.slnx                       # Debug: one readable bundle; Release: minified, chunked
+cd Tesserae.A2UI.Sample/bin/Debug/netstandard2.0/tps && dotnet serve --port 5000
 
-1. **Inference**: An agent (typically backed by a language or a decision model)
-   instructed by an A2UI skill (created using an A2UI Agent SDK) generates the
-   description of UI and data using an appropriate inference format (e.g. A2UI
-   Express, or a decision tree).
-2. **Transport**: An A2UI Agent SDK, embedded in a larger agent architecture,
-   parses and validates the model's output, expands macros, and converts the UI
-   to the wire-stable _A2UI Transport_ protocol messages, which are sent to the
-   renderer.
-3. **Rendering**: A renderer is made of an _A2UI Core_ library (e.g. the
-   `@a2ui/web_core` npm package, or `a2ui_core` Dart package), a UI framework
-   adapter (e.g. `@a2ui/react` React adapter, or `a2ui_flutter` Flutter
-   adapter), and a widget catalog. The core library parses the incoming
-   messages and creates a framework-agnostic in-memory representation of the UI
-   and data. The framework adapter maps the in-memory representation to concrete
-   framework-specific UI widgets. The widget catalog provides access to the
-   widgets the agent is allowed to compose.
+cd Tesserae.A2UI.Sample/playwright && npm install && npx playwright install chromium && npm test
+```
 
-## Getting started
+`node scripts/make-sample-examples.mjs` refreshes the gallery's example files from `.reference/`. Nothing is built for Node: the examples are fetched by the page.
 
-Pick the path that matches where you want to start:
+## Packaging
 
-| Path                                                             | What you get                                                                                                    | Time   |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------ |
-| 🍜 **[Quickstart](https://a2ui.org/quickstart/)**                | A full-stack A2UI app with a backend and frontend. Learn A2UI end-to-end and customize to your use case.        | ~5 min |
-| 🎨 **[A2UI Composer](https://a2ui-project.github.io/composer/)** | Generate A2UI JSON from a visual editor and paste it into any agent prompt — no install required.               | ~1 min |
-| 🎬 **[A2UI Theater](https://a2ui-composer.ag-ui.com/theater)**   | Step through pre-built A2UI streaming scenarios across Lit, React, and Angular renderers — no install required. | ~1 min |
+`.azure-devops/build-nuget-transpose.yml` builds `Tesserae.A2UI` with a CalVer version (`yy.M.build`) and pushes the package to NuGet.
+GitHub workflows run the Playwright suite on pull requests (`tests.yml`) and publish the gallery to GitHub Pages (`pages.yml`).
 
-## Packages
+## License
 
-These packages are developed in this repository. Packages marked "Not published
-yet" can be used from source.
-
-### Python
-
-| Package                              | Description                                                                                        | Version                                                                                               |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| [a2ui-core](python/a2ui_core/)       | Protocol messages, data model, data binding, expression evaluation, and catalog validation.        | [![PyPI](https://img.shields.io/pypi/v/a2ui-core.svg)](https://pypi.org/project/a2ui-core/)           |
-| [a2ui-agent-sdk](python/a2ui_agent/) | Agent SDK: negotiates catalogs, generates prompts and skills, and compiles model output into A2UI. | [![PyPI](https://img.shields.io/pypi/v/a2ui-agent-sdk.svg)](https://pypi.org/project/a2ui-agent-sdk/) |
-| [a2ui-a2a](python/a2ui_a2a/)         | Connects the agent SDK to the [Agent-to-Agent (A2A) protocol](https://a2a-protocol.org).           | [![PyPI](https://img.shields.io/pypi/v/a2ui-a2a.svg)](https://pypi.org/project/a2ui-a2a/)             |
-| [a2ui-adk](python/a2ui_adk/)         | Connects the agent SDK to the [Agent Development Kit (ADK)](https://github.com/google/adk-python). | [![PyPI](https://img.shields.io/pypi/v/a2ui-adk.svg)](https://pypi.org/project/a2ui-adk/)             |
-
-### TypeScript
-
-| Package                                                   | Description                                                                                                | Version                                                                                                       |
-| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [@a2ui/web_core](typescript/core/web_core/)               | Protocol messages, state management, expressions, and basic catalog shared by renderers and `@a2ui/agent`. | [![npm](https://img.shields.io/npm/v/@a2ui/web_core.svg)](https://www.npmjs.com/package/@a2ui/web_core)       |
-| [@a2ui/lit](typescript/renderers/lit/)                    | Lit (web components) renderer.                                                                             | [![npm](https://img.shields.io/npm/v/@a2ui/lit.svg)](https://www.npmjs.com/package/@a2ui/lit)                 |
-| [@a2ui/angular](typescript/renderers/angular/)            | Angular renderer.                                                                                          | [![npm](https://img.shields.io/npm/v/@a2ui/angular.svg)](https://www.npmjs.com/package/@a2ui/angular)         |
-| [@a2ui/react](typescript/renderers/react/)                | React renderer.                                                                                            | [![npm](https://img.shields.io/npm/v/@a2ui/react.svg)](https://www.npmjs.com/package/@a2ui/react)             |
-| [@a2ui/markdown-it](typescript/renderers/markdown-it/)    | Markdown rendering with markdown-it and DOMPurify, shared by the web renderers.                            | [![npm](https://img.shields.io/npm/v/@a2ui/markdown-it.svg)](https://www.npmjs.com/package/@a2ui/markdown-it) |
-| [@a2ui/agent](typescript/agents/a2ui_agent/)              | Agent SDK: negotiates catalogs, generates prompts and skills, and compiles model output into A2UI.         | [![npm](https://img.shields.io/npm/v/@a2ui/agent.svg)](https://www.npmjs.com/package/@a2ui/agent)             |
-| [@a2ui/catalog-mcp](typescript/catalogs/mcp/)             | MCP catalog: calls MCP tools and renders A2UI messages returned in tool results and UI resources.          | [![npm](https://img.shields.io/npm/v/@a2ui/catalog-mcp.svg)](https://www.npmjs.com/package/@a2ui/catalog-mcp) |
-| [@a2ui/catalog-vegachart](typescript/catalogs/vegachart/) | VegaChart catalog: renders Vega and Vega-Lite chart specifications on A2UI surfaces.                       | Not published yet                                                                                             |
-
-### Dart and Flutter
-
-| Package                            | Description                                                                                        | Version                                                                                        |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [a2ui_core](dart/a2ui_core/)       | Protocol messages, data model, data binding, and expressions for renderers and agents.             | [![pub](https://img.shields.io/pub/v/a2ui_core.svg)](https://pub.dev/packages/a2ui_core)       |
-| [a2ui_agent](dart/a2ui_agent/)     | Agent SDK: negotiates catalogs, generates prompts and skills, and compiles model output into A2UI. | [![pub](https://img.shields.io/pub/v/a2ui_agent.svg)](https://pub.dev/packages/a2ui_agent)     |
-| [a2ui_flutter](dart/a2ui_flutter/) | Flutter renderer.                                                                                  | [![pub](https://img.shields.io/pub/v/a2ui_flutter.svg)](https://pub.dev/packages/a2ui_flutter) |
-| [a2ui_cli](dart/a2ui_cli/)         | Developer tool that generates typesafe component code from a catalog.                              | [GitHub Releases](https://github.com/a2ui-project/a2ui/releases)                               |
-
-### Swift
-
-The Swift libraries are distributed via Swift Package Manager from
-[Package.swift](Package.swift) at the root of this repository.
-
-| Package                                            | Description                                                                          |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [A2UISwiftCore, BasicCatalog](swift/core/)         | Message processor, data model, expression evaluation, and basic catalog definitions. |
-| [A2UISwiftUI, BasicCatalogSwiftUI](swift/swiftui/) | SwiftUI renderer and basic catalog views.                                            |
-
-## Roadmap
-
-- **Protocol v1.1**: We are collecting requirements for the next iteration of
-  the A2UI protocol.
-- **Inference**: Support for decision models (e.g. Jev).
-- **Templates**: A cross-framework templating engine and a set of standard
-  primitives for rendering reusable rich UI widgets.
-- **Sandboxed logic**: A way to securely attach logic to A2UI components.
-- **Agent SDK**: Skill generation, better diagnostics, and integrations with
-  more agent frameworks.
-- **Evals**: A set of tools for evaluating generated UI quality.
-- **MCP Apps**: Embedding MCP Apps inside A2UI, and embedding A2UI experiences
-  into MCP Apps.
-- **CLI**: Schema validation, codegen, local preview, and integration with
-  coding agents.
-
-## Contribute
-
-A2UI is an **Apache 2.0** licensed project. We believe the future of UI is agentic,
-and we want to work with you to help build it.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
+MIT, see [LICENSE](LICENSE). The A2UI specification and examples in `.reference/` are Apache-2.0 (see `.reference/LICENSE`).
