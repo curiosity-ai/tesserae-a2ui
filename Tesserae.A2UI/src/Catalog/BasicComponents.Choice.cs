@@ -138,14 +138,7 @@ namespace Tesserae.A2UI
 
             IComponent control = parts.Count == 1 ? parts[0] : VStack().Gap(GapPx.px()).Children(parts.ToArray());
 
-            if (cx.Prop("label") is object)
-            {
-                var l = Label("").SetContent(control);
-                cx.BindString("label", s => l.Text = s);
-                control = l;
-            }
-
-            return WithChecks(cx, control);
+            return WithChecks(cx, Labelled(cx, control));
         }
     }
 }

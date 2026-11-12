@@ -10,13 +10,13 @@ no JavaScript of its own.
 
 ```
 .reference/                         the upstream a2ui repository, moved here unmodified (spec, catalogs, examples, other renderers).
-                                    Read it, do not edit it. Its GitHub workflows are renamed *.disabled and must stay that way.
+                                    Read it, do not edit it. Its GitHub workflows and every other `.yml` file are renamed `*.yml.disabled` and must stay that way.
 Tesserae.A2UI/                      the package
   src/Json/JsonValue.cs             typed JSON (parse, serialise, deep equality). "undefined" is a C# null, JSON null is JsonValue.Null
   src/Protocol/                     A2UIMessage (agent -> renderer, parsed), A2UIAction / A2UIError (renderer -> agent)
   src/Model/                        DataModel (JSON Pointer, subscriptions), Surface (components + data), EvalContext (scope + dependencies)
   src/Functions/                    Expressions (evaluator, ${...} parser), BasicFunctions, RegexDialect, Coerce
-  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), IconMap, MediaUrl
+  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), FlintChartCatalog (the one extension catalog: FlintChart), IconMap, MediaUrl
   src/Rendering/                    ComponentContext (what a factory gets), ComponentSlot (id in a scope), Disposer / LiveBinding
   src/Components/                   A2UIHost (the public entry), SurfaceView
   src/Interop/Js.cs                 the only direct JavaScript: Intl number/plural/date services, window.open, URL resolution

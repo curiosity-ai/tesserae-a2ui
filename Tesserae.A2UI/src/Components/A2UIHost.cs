@@ -34,8 +34,25 @@ namespace Tesserae.A2UI
         private Action<JsonValue, JsonValue> _onMessage;
         private Action<A2UIMessage> _onProcessed;
 
+        private static bool _stylesAdded;
+
+        /// <summary>The few rules the renderer needs that an inline style cannot say (a child selector), added once per page.</summary>
+        private static void EnsureStyles()
+        {
+            if (_stylesAdded) return;
+            _stylesAdded = true;
+
+            var style = document.createElement("style");
+            style.setAttribute("data-a2ui-styles", "");
+            style.textContent =
+                ".a2ui-row-auto > [data-a2ui-component=\"Text\"], .a2ui-row-auto > [data-a2ui-component=\"Icon\"], .a2ui-row-auto > [data-a2ui-component=\"Button\"], .a2ui-row-auto > [data-a2ui-component=\"CheckBox\"] { align-self: center; }";
+            document.head.appendChild(style);
+        }
+
         public A2UIHost()
         {
+            EnsureStyles();
+
             _root = document.createElement("div");
             _root.className = "a2ui-host";
             _root.style.display = "flex";

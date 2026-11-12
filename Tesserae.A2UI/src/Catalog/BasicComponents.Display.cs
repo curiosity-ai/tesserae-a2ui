@@ -27,6 +27,10 @@ namespace Tesserae.A2UI
 
             el.style.minWidth = "0";
             cx.BindString("text", s => md.Text = s);
+
+            //The markdown block preserves whitespace, and the HTML it renders ends with a newline: that was a blank line under every Text, which
+            //doubled the height of a one-line label. Markdown does not use the whitespace for anything a browser would not collapse anyway.
+            el.style.whiteSpace = "normal";
             return md;
         }
 
@@ -66,7 +70,9 @@ namespace Tesserae.A2UI
                     el.style.width = "100%"; el.style.height = "200px";
                     break;
                 default:
-                    el.style.width = "100%"; el.style.maxWidth = "300px";
+                    //A fixed width, not 100%: inside a row that is as wide as its content a percentage has nothing to resolve against, and the
+                    //image (empty while it loads, or when it cannot) took the width of the text beside it.
+                    el.style.width = "200px"; el.style.maxWidth = "100%"; el.style.flexShrink = "0";
                     break;
             }
 

@@ -170,6 +170,20 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
+  await suite.test('FlintChart extension: draws bound rows and a click writes the row to the data model', async () => {
+    const page = await L.open(browser, base, 'Charts');
+    try {
+      const stage = page.locator('.a2ui-surface');
+      await stage.locator('.tss-flintchart svg').first().waitFor({ timeout: 15000 });
+      L.assert(await stage.locator('.tss-flintchart-message').count() === 0, 'the chart reported: ' + await stage.locator('.tss-flintchart-message').allInnerTexts());
+      const bars = stage.locator('.tss-flintchart svg g.marks path');
+      const before = await bars.count();
+      await bars.nth(2).click();
+      await stage.getByText(/Clicked: \w+ \(\d+\)/).waitFor({ timeout: 5000 });
+      L.assert(before >= 4, 'bars drawn: ' + before);
+    } finally { await page.__ctx.close(); }
+  });
+
   await suite.test('agent function calls: callAgentFunction goes out, callRendererFunction is answered, openUrl is refused', async () => {
     const page = await L.open(browser, base, 'Actions and Functions');
     try {
