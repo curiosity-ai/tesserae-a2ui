@@ -68,6 +68,22 @@ MountToBody(host.S());                                         // a host is an o
 Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatNumber` `formatCurrency` `formatDate` (Unicode TR35 patterns)
 `pluralize` `openUrl` (user gesture only, http/https only) `and` `or` `not`, and the system function `@index`.
 
+### Charts: the FlintChart extension
+
+`FlintChartCatalog` is an extension catalog with one component, `FlintChart`, drawn with Tesserae's `FlintChart` (Flint over Vega-Lite). Register it, then name it per component with `@catalogId`:
+
+```csharp
+FlintChartCatalog.AddTo(host);
+```
+
+```json
+{ "id": "chart", "component": "FlintChart", "@catalogId": "https://tesserae.dev/a2ui/catalogs/flint-chart/1.0",
+  "chartType": "Bar Chart", "data": { "@path": "/sales" },
+  "encodings": { "x": "Product", "y": "Sales" }, "semanticTypes": { "Sales": "Amount" }, "title": "Sales", "height": 260 }
+```
+
+`data` is a bindable list of row objects; `chartType`, `encodings`, `semanticTypes` and `properties` are Flint's vocabulary, `spec` takes a whole Flint spec, and `selected` (a path) plus `action` report a click.
+
 ### A custom catalog
 
 ```csharp

@@ -302,6 +302,52 @@ The basic catalog can be changed too. `Override` replaces a component, `Decorate
         public HTMLElement Render() => _content.Render();
     }
 
+    [SampleDetails(Group = "Guides", Order = 55, Icon = UIcons.ChartHistogram)]
+    public class ChartsSample : IComponent, ISample
+    {
+        private readonly IComponent _content;
+
+        public ChartsSample()
+        {
+            var host = new A2UIHost();
+            var inspector = new Inspector(host);
+
+            FlintChartCatalog.AddTo(host);
+
+            host.Process(J(@"[{'version':'1.0','createSurface':{'surfaceId':'charts','catalogId':'" + BASIC + @"','dataModel':{
+                'sales':[{'Product':'Notebooks','Sales':1840,'Region':'North'},{'Product':'Pens','Sales':2650,'Region':'North'},{'Product':'Ink','Sales':730,'Region':'South'},{'Product':'Paper','Sales':3120,'Region':'South'}],
+                'picked':{}},'components':[
+                {'id':'root','component':'Card','child':'col'},
+                {'id':'col','component':'Column','children':['chart','hint']},
+                {'id':'chart','component':'FlintChart','@catalogId':'" + FlintChartCatalog.Id + @"','chartType':'Bar Chart','height':260,
+                   'data':{'@path':'/sales'},'semanticTypes':{'Sales':'Amount','Product':'Category'},'encodings':{'x':'Product','y':'Sales'},
+                   'title':'Sales per product','selected':{'@path':'/picked'},'action':{'event':{'name':'bar_clicked','context':{'row':{'@path':'/picked'}}}}},
+                {'id':'hint','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Clicked: ${/picked/Product} (${/picked/Sales})'}}}
+              ]}}]"));
+
+            _content = Guide.Page("Charts", UIcons.ChartHistogram, "A FlintChart component from an extension catalog", "GuideSamples.cs",
+@"`FlintChartCatalog` is an **extension catalog**: one component, `FlintChart`, drawn with Tesserae's `FlintChart` (Microsoft's Flint over Vega-Lite). It is not part of the basic
+catalog, so a surface names it per component with `@catalogId`, the way the **Custom catalogs** page mixes in its Rating:
+
+```csharp
+FlintChartCatalog.AddTo(host);        // host.RegisterCatalog(FlintChartCatalog.Create())
+```
+
+```json
+{ ""id"": ""chart"", ""component"": ""FlintChart"", ""@catalogId"": ""https://tesserae.dev/a2ui/catalogs/flint-chart/1.0"",
+  ""chartType"": ""Bar Chart"", ""data"": { ""@path"": ""/sales"" },
+  ""encodings"": { ""x"": ""Product"", ""y"": ""Sales"" }, ""semanticTypes"": { ""Sales"": ""Amount"" },
+  ""title"": ""Sales per product"", ""height"": 260 }
+```
+
+`data` is a list of row objects and can be bound, so the chart redraws when the list changes. `chartType`, `encodings`, `semanticTypes` and `properties` are Flint's own
+vocabulary; `spec` takes a whole Flint spec instead. `selected` is a path that receives the row a click stood for, and `action` runs after it is written (click a bar).",
+                Guide.Live(host, inspector));
+        }
+
+        public HTMLElement Render() => _content.Render();
+    }
+
     [SampleDetails(Group = "Guides", Order = 60, Icon = UIcons.Bug)]
     public class ErrorHandlingSample : IComponent, ISample
     {
