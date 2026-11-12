@@ -54,7 +54,7 @@ MountToBody(host.S());                                         // a host is an o
 | `List` | a scrolling `Stack`, vertical or horizontal |
 | `Card` | `Card` |
 | `Tabs` | `Pivot` |
-| `Divider` | `HorizontalSeparator`; the vertical axis is a provisional one-pixel rule (see TODO) |
+| `Divider` | `HorizontalSeparator`, or `VerticalSeparator` for the vertical axis |
 | `Modal` | `Modal` opened by the trigger |
 | `Button` | `Button` (`primary` / `borderless` variants; a Text or Icon child becomes its label or icon); `@checks` disable it |
 | `CheckBox` | `CheckBox` |

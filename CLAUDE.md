@@ -70,8 +70,8 @@ children, validation and actions through `ComponentContext` alone, registered on
 
 ## Where Tesserae has no matching component
 
-**Stop and report before implementing one** (the maintainer asked for this). Today that is a vertical `Divider` only; the renderer draws a provisional rule and TODO.md says so.
-`Video` and `AudioPlayer` were gaps too and now live in Tesserae itself (`VideoPlayer`, `AudioPlayer`, moved from mosaik): this package maps onto them.
+**Stop and report before implementing one** (the maintainer asked for this). There are none today: `Video`, `AudioPlayer` and the vertical `Divider` were gaps and now live
+in Tesserae itself (`VideoPlayer`, `AudioPlayer`, `VerticalSeparator`), which this package maps onto.
 
 ## The sample gallery and its data
 

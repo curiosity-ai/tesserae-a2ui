@@ -2,11 +2,8 @@
 
 Running list of what is not done or is rough. Nothing here is hidden by a green test.
 
-## Waiting on a decision
-- **`Divider` with `axis: "vertical"`**: `HorizontalSeparator` is horizontal only. A provisional one-pixel rule is drawn in the renderer. Needs a decision on whether Tesserae gets a vertical separator (or `HorizontalSeparator` an orientation) that the catalog then maps onto.
-
 ## Requires an unpublished Tesserae
-- `Video` and `AudioPlayer` use `Tesserae.VideoPlayer` / `AudioPlayer`, which are in Tesserae after 2026.11.73499. Bump the Tesserae version in both csprojs once a build containing them is published (the themes pin follows).
+- `Video`, `AudioPlayer` and a vertical `Divider` use `Tesserae.VideoPlayer`, `AudioPlayer` and `VerticalSeparator`, which are in Tesserae after 2026.11.73499. Bump the Tesserae version in both csprojs once a build containing them is published (the themes pin follows).
 
 ## Protocol
 - v0.9 / v0.9.1 / v0.8 messages are not accepted (a message must be v1.0 shaped; `version` is not enforced).

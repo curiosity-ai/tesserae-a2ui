@@ -176,20 +176,7 @@ namespace Tesserae.A2UI
 
         public static IComponent Divider(ComponentContext cx)
         {
-            if (cx.Literal("axis", "horizontal") == "vertical")
-            {
-                // Tesserae's separator is horizontal only: a provisional one-pixel rule drawn with the theme's border colour.
-                var rule = document.createElement("div");
-                rule.setAttribute("role", "separator");
-                rule.setAttribute("aria-orientation", "vertical");
-                rule.style.alignSelf = "stretch";
-                rule.style.width = "1px";
-                rule.style.minHeight = "1em";
-                rule.style.flexShrink = "0";
-                rule.style.background = "var(--tss-border-color, currentColor)";
-                rule.style.opacity = "0.5";
-                return Raw(rule);
-            }
+            if (cx.Literal("axis", "horizontal") == "vertical") return VerticalSeparator();
 
             return HorizontalSeparator("");
         }
