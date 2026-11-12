@@ -11,7 +11,6 @@
  *
  * Deliberately not rewritten: nothing needs a <base> or an absolute-path fixup for the
  * `/tesserae-a2ui/` sub-path Pages serves from. Every reference in index.html is relative,
- * and 
  *
  * Usage: node scripts/stage-samples.mjs [source-dir] [dest-dir]
  * Cross-platform, no dependencies. Run after `dotnet build ... -c Release`.
@@ -30,11 +29,13 @@ if (!existsSync(join(SOURCE, 'index.html'))) {
   process.exit(1);
 }
 
-// The gallery fetches its examples by URL; a site without them lists pages that can never load. They are copied by the
-// sample's own _CopySampleExamples target after the compiler has written the rest, so a missing folder is a half-built site.
-if (!existsSync(join(SOURCE, 'assets/examples/index.json'))) {
-  console.error(`No assets/examples/index.json in ${SOURCE} - the sample example copy did not run.`);
-  process.exit(1);
+// The gallery fetches its examples and demo media by URL; a site without them lists pages that can never load. They are copied by the
+// sample's own _CopySampleExamples target after the compiler has written the rest, so a missing file is a half-built site.
+for (const required of ['assets/examples/index.json', 'assets/media/sample-audio.wav', 'assets/media/sample-video.webm']) {
+  if (!existsSync(join(SOURCE, required))) {
+    console.error(`No ${required} in ${SOURCE} - the sample's asset copy did not run.`);
+    process.exit(1);
+  }
 }
 
 rmSync(DEST, { recursive: true, force: true });
