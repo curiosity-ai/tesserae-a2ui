@@ -1,0 +1,39 @@
+<Project Sdk="Transpose.Build.Target/26.8.4125">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>TRANSPOSE</DefineConstants>
+    <AssemblyName>Tesserae.A2UI</AssemblyName>
+    <RootNamespace>Tesserae.A2UI</RootNamespace>
+    <LangVersion>7.2</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <SkipResourcesExtraction>true</SkipResourcesExtraction>
+    <MinifyLocalVariables>true</MinifyLocalVariables>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Transpose.BCL" Version="26.10.7423" />
+    <PackageReference Include="Transpose.Core" Version="26.10.7420" />
+    <PackageReference Include="Tesserae" Version="2026.11.73511" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>(c) Copyright 2026 Curiosity GmbH - all right reserved</Copyright>
+    <Company>Curiosity GmbH</Company>
+    <Authors>Curiosity GmbH</Authors>
+    <PackageProjectUrl>https://github.com/curiosity-ai/tesserae-a2ui</PackageProjectUrl>
+    <PackageId>Tesserae.A2UI</PackageId>
+    <Description>Tesserae.A2UI renders A2UI (Agent-to-User Interface) v1.0 messages as a live Tesserae user interface: the streaming message protocol, the reactive data model with two-way binding, the basic catalog and its functions, validation checks, actions, and custom catalogs, all in C# compiled to JavaScript with Transpose.</Description>
+    <PackageTags>transpose, HTML, UI, components, a2ui, agent, generative-ui, tesserae</PackageTags>
+    <NoWarn>1701;1702;1591</NoWarn>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

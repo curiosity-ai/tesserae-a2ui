@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Project Path="Tesserae.A2UI/Tesserae.A2UI.csproj" />
+  <Project Path="Tesserae.A2UI.Sample/Tesserae.A2UI.Sample.csproj" />
+  <Folder Name="/DevOps/">
+    <File Path=".azure-devops/build-nuget-transpose.yml" />
+    <File Path=".github/workflows/pages.yml" />
+    <File Path=".github/workflows/tests.yml" />
+    <File Path="scripts/stage-samples.mjs" />
+    <File Path="scripts/make-sample-examples.mjs" />
+  </Folder>
+</Solution>

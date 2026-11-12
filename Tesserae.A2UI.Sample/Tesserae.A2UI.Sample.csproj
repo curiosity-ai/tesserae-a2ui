@@ -1,0 +1,45 @@
+<Project Sdk="Transpose.Build.Target/26.8.4125">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefineConstants>TRANSPOSE</DefineConstants>
+    <AssemblyName>app</AssemblyName>
+    <RootNamespace>Tesserae.A2UI.Sample</RootNamespace>
+    <LangVersion>7.2</LangVersion>
+    <MinifyLocalVariables>true</MinifyLocalVariables>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Transpose.BCL" Version="26.10.7423" />
+    <PackageReference Include="Transpose.Core" Version="26.10.7420" />
+    <PackageReference Include="Tesserae" Version="2026.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Curiosity" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Stratus" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.RetroOS" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Rechenwerk" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Weniger" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Zeitung" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Blaupause" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Phosphor" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Glas" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Kristall" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Kontrast" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Memphis" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Washi" Version="26.11.73511" />
+    <PackageReference Include="Tesserae.Themes.Graustufe" Version="26.11.73511" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tesserae.A2UI\Tesserae.A2UI.csproj" />
+  </ItemGroup>
+
+  <!-- The A2UI basic-catalog examples the gallery draws (scripts/make-sample-examples.mjs copies them from .reference/). -->
+  <Target Name="_CopySampleExamples" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <_SampleExamples Include="assets\examples\**\*" />
+      <_SampleMedia Include="assets\media\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_SampleExamples)" DestinationFiles="@(_SampleExamples->'$(OutDir)tps\assets\examples\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_SampleMedia)" DestinationFiles="@(_SampleMedia->'$(OutDir)tps\assets\media\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

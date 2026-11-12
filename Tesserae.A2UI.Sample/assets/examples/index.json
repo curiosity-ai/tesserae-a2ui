@@ -1,0 +1,804 @@
+[
+  {
+    "id": "00_simple-text",
+    "name": "Simple Text",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-simple-text"
+    ],
+    "components": [
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_row-layout",
+    "name": "Row Layout",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-row-layout"
+    ],
+    "components": [
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_complex-layout",
+    "name": "Complex Layout",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-complex-layout"
+    ],
+    "components": [
+      "Column",
+      "Row",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_formatted-text",
+    "name": "Formatted Text",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-formatted-text"
+    ],
+    "components": [
+      "Column",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_interactive-button",
+    "name": "Interactive Button",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-interactive-button"
+    ],
+    "components": [
+      "Button",
+      "Column",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "35_markdown-text",
+    "name": "Markdown Text Support",
+    "description": "Demonstrates Markdown rendering in Text component.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "gallery-markdown-text"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "36_modal",
+    "name": "Modal Sample",
+    "description": "Example of Modal component showing a trigger and content.",
+    "group": "Basics",
+    "messages": 2,
+    "surfaces": [
+      "modal-sample-surface"
+    ],
+    "components": [
+      "Button",
+      "Column",
+      "Modal",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_simple-login-form",
+    "name": "Simple Login Form",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Forms and validation",
+    "messages": 2,
+    "surfaces": [
+      "gallery-simple-login-form"
+    ],
+    "components": [
+      "Button",
+      "Column",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "09_login-form",
+    "name": "Login Form with Validation",
+    "description": "Example of login form demonstrating validation checks and logic.",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-login-form"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Row",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "02_email-compose",
+    "name": "Email Compose",
+    "description": "Example of email compose",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-email-compose"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "10_notification-permission",
+    "name": "Notification Permission",
+    "description": "Example of notification permission",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-notification-permission"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "07_task-card",
+    "name": "Task Card",
+    "description": "Example of task card demonstrating CheckBox and DateTimeInput.",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-task-card"
+    ],
+    "components": [
+      "Card",
+      "CheckBox",
+      "Column",
+      "DateTimeInput",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "19_software-purchase",
+    "name": "Software Purchase",
+    "description": "Example of software purchase demonstrating currency formatting and ChoicePicker.",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-software-purchase"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "ChoicePicker",
+      "Column",
+      "Divider",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "22_credit-card",
+    "name": "Credit Card",
+    "description": "Example of credit card",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-credit-card"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "32_advanced-form-validator",
+    "name": "Advanced Form Validator",
+    "description": "Demonstrates complex validation logic and deeply nested formatting functions.",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-advanced-validator"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "CheckBox",
+      "Column",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "30_live-invitation-builder",
+    "name": "Live Invitation Builder",
+    "description": "Demonstrates reactive two-way binding where editor inputs update a live preview in real-time.",
+    "group": "Forms and validation",
+    "messages": 3,
+    "surfaces": [
+      "gallery-invitation-builder"
+    ],
+    "components": [
+      "Card",
+      "ChoicePicker",
+      "Column",
+      "DateTimeInput",
+      "Image",
+      "Row",
+      "Text",
+      "TextField"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "34_child-list-template",
+    "name": "ChildList Template Expansion",
+    "description": "Demonstrates dynamic list generation using ChildList object templates.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-child-list-template"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "List",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "03_calendar-day",
+    "name": "Calendar Day",
+    "description": "Example of calendar day demonstrating dynamic templating, relative paths, and date formatting.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-calendar-day"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "04_weather-current",
+    "name": "Weather Current",
+    "description": "Example of weather current demonstrating templating and string formatting.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-weather-current"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "12_chat-message",
+    "name": "Chat Message",
+    "description": "Example of chat message demonstrating templating and relative paths.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-chat-message"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "13_coffee-order",
+    "name": "Coffee Order",
+    "description": "Example of coffee order demonstrating templating and currency formatting.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-coffee-order"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "18_track-list",
+    "name": "Track List",
+    "description": "Example of track list demonstrating templating, relative paths, and number formatting.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-track-list"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "21_shipping-status",
+    "name": "Shipping Status",
+    "description": "Example of shipping status demonstrating templating and relative paths.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-shipping-status"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "33_financial-data-grid",
+    "name": "Financial Data Grid",
+    "description": "Demonstrates complex layout weighting and alignment using Rows and Columns with templates.",
+    "group": "Lists and templates",
+    "messages": 3,
+    "surfaces": [
+      "gallery-financial-grid"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Icon",
+      "List",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "01_flight-status",
+    "name": "Flight Status",
+    "description": "Example of flight status demonstrating date formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-flight-status"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "05_product-card",
+    "name": "Product Card",
+    "description": "Example of product card demonstrating currency formatting and pluralization.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-product-card"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "08_user-profile",
+    "name": "User Profile",
+    "description": "Example of user profile demonstrating number formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-user-profile"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "11_purchase-complete",
+    "name": "Purchase Complete",
+    "description": "Example of purchase complete demonstrating currency formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-purchase-complete"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "14_sports-player",
+    "name": "Sports Player",
+    "description": "Example of sports player",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-sports-player"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "15_account-balance",
+    "name": "Account Balance",
+    "description": "Example of account balance demonstrating currency formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-account-balance"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "16_workout-summary",
+    "name": "Workout Summary",
+    "description": "Example of workout summary demonstrating number and date formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-workout-summary"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "17_event-detail",
+    "name": "Event Detail",
+    "description": "Example of event detail demonstrating date and string formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-event-detail"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "20_restaurant-card",
+    "name": "Restaurant Card",
+    "description": "Example of restaurant card",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-restaurant-card"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Icon",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "23_step-counter",
+    "name": "Step Counter",
+    "description": "Example of step counter demonstrating number formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-step-counter"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "24_recipe-card",
+    "name": "Recipe Card",
+    "description": "Example of recipe card demonstrating Tabs and pluralization.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-recipe-card"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Icon",
+      "Image",
+      "Row",
+      "Tabs",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "25_contact-card",
+    "name": "Contact Card",
+    "description": "Example of contact card",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-contact-card"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Divider",
+      "Icon",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "27_stats-card",
+    "name": "Stats Card",
+    "description": "Example of stats card demonstrating currency and number formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-stats-card"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Icon",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "28_countdown-timer",
+    "name": "Countdown Timer",
+    "description": "Example of countdown timer demonstrating date formatting.",
+    "group": "Cards",
+    "messages": 3,
+    "surfaces": [
+      "gallery-countdown-timer"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "00_incremental",
+    "name": "Incremental",
+    "description": "Simple example demonstrating basic catalog components.",
+    "group": "Streaming",
+    "messages": 6,
+    "surfaces": [
+      "gallery-incremental"
+    ],
+    "components": [
+      "Button",
+      "Column",
+      "Text"
+    ],
+    "streaming": true
+  },
+  {
+    "id": "31_incremental-dashboard",
+    "name": "Incremental Dashboard",
+    "description": "Demonstrates structural evolution of a UI where loading placeholders are incrementally replaced by actual components.",
+    "group": "Streaming",
+    "messages": 5,
+    "surfaces": [
+      "gallery-incremental-dashboard"
+    ],
+    "components": [
+      "Card",
+      "Column",
+      "List",
+      "Row",
+      "Text"
+    ],
+    "streaming": true
+  },
+  {
+    "id": "06_music-player",
+    "name": "Music Player",
+    "description": "Example of music player",
+    "group": "Media",
+    "messages": 3,
+    "surfaces": [
+      "gallery-music-player"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Icon",
+      "Image",
+      "Row",
+      "Slider",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "26_podcast-episode",
+    "name": "Podcast Episode",
+    "description": "Example of podcast episode demonstrating AudioPlayer and date formatting.",
+    "group": "Media",
+    "messages": 3,
+    "surfaces": [
+      "gallery-podcast-episode"
+    ],
+    "components": [
+      "AudioPlayer",
+      "Card",
+      "Column",
+      "Image",
+      "Row",
+      "Text"
+    ],
+    "streaming": false
+  },
+  {
+    "id": "29_movie-card",
+    "name": "Movie Card",
+    "description": "Example of movie card demonstrating Modal and Video components.",
+    "group": "Media",
+    "messages": 3,
+    "surfaces": [
+      "gallery-movie-card"
+    ],
+    "components": [
+      "Button",
+      "Card",
+      "Column",
+      "Icon",
+      "Image",
+      "Modal",
+      "Row",
+      "Text",
+      "Video"
+    ],
+    "streaming": false
+  }
+]

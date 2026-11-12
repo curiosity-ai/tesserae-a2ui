@@ -1,0 +1,80 @@
+variables:
+  buildConfiguration: 'Release'
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Tesserae.A2UI/*
+      - .azure-devops/build-nuget-transpose.yml
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- checkout: self
+  submodules: true
+  persistCredentials: true
+
+- task: PowerShell@2
+  displayName: 'Create CalVer Version'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $dottedDate = (Get-Date).ToString("yy.M")
+      $buildID = $($env:BUILD_BUILDID)
+      $modBuildID = [int]$buildID % 65536  # ensure fits in int16
+      $newTargetVersion = "$dottedDate.$modBuildID"
+      Write-Host "##vso[task.setvariable variable=targetVersion;]$newTargetVersion"
+      Write-Host "Updated targetVersion to '$newTargetVersion'"
+
+- task: UseDotNet@2
+  displayName: 'Use .NET 10.0 sdk'
+  inputs:
+    packageType: sdk
+    version: 10.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- task: NuGetToolInstaller@1
+
+- task: CmdLine@2
+  displayName: 'install Transpose compiler'
+  inputs:
+    script: 'dotnet tool update --global Transpose.Compiler'
+
+# There is no global-tool compiler for Transpose: the Transpose.Build.Target SDK
+# runs the `tps` compiler as part of the normal `dotnet build` below.
+
+- task: CmdLine@2
+  displayName: 'restore Tesserae.A2UI project'
+  inputs:
+    script: 'dotnet restore $(Build.SourcesDirectory)\Tesserae.A2UI\Tesserae.A2UI.csproj'
+    workingDirectory: '$(Build.SourcesDirectory)/Tesserae.A2UI/'
+
+- task: CmdLine@2
+  displayName: 'Build Tesserae.A2UI'
+  inputs:
+    script: 'dotnet build $(Build.SourcesDirectory)\Tesserae.A2UI\Tesserae.A2UI.csproj -c $(buildConfiguration) /p:Version=$(targetVersion)'
+    workingDirectory: '$(Build.SourcesDirectory)/Tesserae.A2UI/'
+
+# The sample is not packed, but building it proves the package is consumable end to end - it is the
+# only thing that exercises the package being consumable by an application.
+- task: CmdLine@2
+  displayName: 'Build Tesserae.A2UI.Sample'
+  inputs:
+    script: 'dotnet build $(Build.SourcesDirectory)\Tesserae.A2UI.Sample\Tesserae.A2UI.Sample.csproj -c $(buildConfiguration)'
+    workingDirectory: '$(Build.SourcesDirectory)/Tesserae.A2UI.Sample/'
+
+- task: CmdLine@2
+  inputs:
+    script: 'dir $(Build.SourcesDirectory)\Tesserae.A2UI\bin\ /S'
+
+- task: NuGetCommand@2
+  displayName: 'push Tesserae.A2UI to nuget'
+  inputs:
+    command: 'push'
+    packagesToPush: '**/*/Tesserae.A2UI.$(targetVersion).nupkg' # The package name comes from the PackageID, not project name
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'nuget-curiosity-org'
