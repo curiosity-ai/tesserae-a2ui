@@ -82,7 +82,7 @@ FlintChartCatalog.AddTo(host);
   "encodings": { "x": "Product", "y": "Sales" }, "semanticTypes": { "Sales": "Amount" }, "title": "Sales", "height": 260 }
 ```
 
-The id it was first published under, `https://tesserae.dev/a2ui/catalogs/flint-chart/1.0`, is registered too, so older interfaces keep drawing. `data` is a bindable list of row objects; `chartType`, `encodings`, `semanticTypes` and `properties` are Flint's vocabulary, `spec` takes a whole Flint spec, and `selected` (a path) plus `action` report a click.
+`data` is a bindable list of row objects; `chartType`, `encodings`, `semanticTypes` and `properties` are Flint's vocabulary, `spec` takes a whole Flint spec, and `selected` (a path) plus `action` report a click.
 
 ### A custom catalog
 
