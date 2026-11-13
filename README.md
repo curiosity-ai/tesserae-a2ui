@@ -68,6 +68,20 @@ MountToBody(host.S());                                         // a host is an o
 Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatNumber` `formatCurrency` `formatDate` (Unicode TR35 patterns)
 `pluralize` `openUrl` (user gesture only, http/https only) `and` `or` `not`, and the system function `@index`.
 
+### Dashboard components: the Tesserae extension catalog
+
+`TesseraeCatalog` (`https://curiosity.ai/a2ui/catalogs/tesserae/1.0`) adds `Table`, `Grid`, `Metric`, `Banner`, `Badge`, `PropertyGrid` and `Accordion`. Register it with `TesseraeCatalog.AddTo(host)` and name it per component with `@catalogId`. A child without `@catalogId` resolves against the surface's catalog (the spec's order), so a `Grid` of the extension holds `Text` of the basic catalog.
+
+| Component | Properties |
+|---|---|
+| `Table` | `data` (bindable list of rows), `columns` (`field`, `label`, `width`, `format`, `currency`, `align`; every key of the first row when left out), `sortable`, `sortBy`, `maxHeight`, `emptyText`, `selected` + `action` |
+| `Grid` | `children`, `columns` (a count or a track list), `minColumnWidth`, `gap` |
+| `Metric` | `label`, `value`, `delta`, `trend`, `good`, `data` (numbers: a sparkline), `icon`, `large` |
+| `Banner` | `title`, `text`, `severity`, `dismissible`, `actionLabel` + `action` |
+| `Badge` | `text`, `tone`, `outline`, `icon` |
+| `PropertyGrid` | `data` (an object), `fields`, `columns`, `editable` |
+| `Accordion` | `items` (`title`, `child`, `open`), `multiple` |
+
 ### Charts: the FlintChart extension
 
 `FlintChartCatalog` is an extension catalog with one component, `FlintChart`, drawn with Tesserae's `FlintChart` (Flint over Vega-Lite). Register it, then name it per component with `@catalogId`:

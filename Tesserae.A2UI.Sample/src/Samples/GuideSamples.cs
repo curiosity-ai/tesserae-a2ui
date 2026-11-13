@@ -348,6 +348,75 @@ vocabulary; `spec` takes a whole Flint spec instead. `selected` is a path that r
         public HTMLElement Render() => _content.Render();
     }
 
+    [SampleDetails(Group = "Guides", Order = 56, Icon = UIcons.ChartTree)]
+    public class DashboardComponentsSample : IComponent, ISample
+    {
+        private readonly IComponent _content;
+
+        public DashboardComponentsSample()
+        {
+            var host = new A2UIHost();
+            var inspector = new Inspector(host);
+
+            TesseraeCatalog.AddTo(host);
+
+            var json = @"[{'version':'1.0','createSurface':{'surfaceId':'dash','catalogId':'" + BASIC + @"','dataModel':{
+                'sales':[
+                  {'Product':'Notebooks','Region':'North','Units':1840,'Revenue':9200.5,'Updated':'2026-11-02'},
+                  {'Product':'Pens','Region':'North','Units':2650,'Revenue':3180,'Updated':'2026-11-05'},
+                  {'Product':'Ink','Region':'South','Units':730,'Revenue':2190,'Updated':'2026-10-28'},
+                  {'Product':'Paper','Region':'South','Units':3120,'Revenue':15600,'Updated':'2026-11-09'},
+                  {'Product':'Folders','Region':'East','Units':910,'Revenue':1820,'Updated':'2026-11-01'}],
+                'trend':[12,14,13,18,17,22,24,23,29],
+                'account':{'Name':'Acme GmbH','Plan':'Team','Seats':25,'Active':true,'Owner':'Ada Weber'},
+                'picked':{}},'components':[
+                {'id':'root','component':'Column','children':['title','banner','tiles','table','hint','details','who','faq']},
+                {'id':'title','component':'Text','text':'# Quarter at a glance'},
+                {'id':'banner','component':'Banner','@catalogId':'__TC__','severity':'warning','title':'South is behind plan','text':'Ink and Paper are 12% under the quarterly target.'},
+                {'id':'tiles','component':'Grid','@catalogId':'__TC__','columns':3,'children':['m1','m2','m3']},
+                {'id':'m1','component':'Metric','@catalogId':'__TC__','label':'Revenue','value':'$32.0k','delta':'+12.3%','data':{'@path':'/trend'},'icon':'payment'},
+                {'id':'m2','component':'Metric','@catalogId':'__TC__','label':'Open tickets','value':41,'delta':'+6','good':'down'},
+                {'id':'m3','component':'Metric','@catalogId':'__TC__','label':'Churn','value':'2.1%','delta':'-0.4pt','good':'down'},
+                {'id':'table','component':'Table','@catalogId':'__TC__','data':{'@path':'/sales'},'sortBy':'Product',
+                  'columns':[{'field':'Product'},{'field':'Region'},{'field':'Units','format':'number'},{'field':'Revenue','format':'currency','currency':'USD'},{'field':'Updated','format':'date'}],
+                  'selected':{'@path':'/picked'},'action':{'event':{'name':'row_clicked','context':{'row':{'@path':'/picked'}}}}},
+                {'id':'hint','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Clicked row: ${/picked/Product}'}}},
+                {'id':'details','component':'PropertyGrid','@catalogId':'__TC__','data':{'@path':'/account'},'columns':2,'editable':true},
+                {'id':'who','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Owner in the data model: ${/account/Owner}'}}},
+                {'id':'faq','component':'Accordion','@catalogId':'__TC__','items':[
+                  {'title':'What is a Metric?','child':'a1','open':true},
+                  {'title':'Which formats does a Table know?','child':'a2'}]},
+                {'id':'a1','component':'Text','text':'A tile with a number, how it moved and, given a list of numbers, a sparkline.'},
+                {'id':'a2','component':'Text','text':'number, percent, currency, date, datetime and bool. Anything else is shown as it is.'}
+              ]}}]";
+
+            host.Process(J(json.Replace("__TC__", TesseraeCatalog.Id)));
+
+            _content = Guide.Page("Dashboard components", UIcons.ChartTree, "Table, Grid, Metric, Banner, Badge, PropertyGrid and Accordion", "GuideSamples.cs",
+@"`TesseraeCatalog` is an **extension catalog** of the Tesserae components a report is made of, the way `FlintChartCatalog` adds a chart. Register it and name it per component with
+`@catalogId`:
+
+```csharp
+TesseraeCatalog.AddTo(host);   // host.RegisterCatalog(TesseraeCatalog.Create())
+```
+
+| Component | Properties |
+|---|---|
+| `Table` | `data` (bindable list of rows), `columns` (`field`, `label`, `width`, `format`, `currency`, `align`; every key of the first row when left out), `sortable`, `sortBy`, `maxHeight`, `emptyText`, `selected` + `action` for a clicked row |
+| `Grid` | `children`, `columns` (a count or a track list), `minColumnWidth`, `gap` |
+| `Metric` | `label`, `value`, `delta`, `trend`, `good`, `data` (numbers: a sparkline), `icon`, `large` |
+| `Banner` | `title`, `text`, `severity` (`info`, `success`, `warning`, `error`), `dismissible`, `actionLabel` + `action` |
+| `Badge` | `text`, `tone`, `outline`, `icon` |
+| `PropertyGrid` | `data` (an object), `fields`, `columns`, `editable` |
+| `Accordion` | `items` (`title`, `child`, `open`), `multiple` |
+
+Click a row, sort a column, edit a property: the data model on the right follows.",
+                Guide.Live(host, inspector));
+        }
+
+        public HTMLElement Render() => _content.Render();
+    }
+
     [SampleDetails(Group = "Guides", Order = 60, Icon = UIcons.Bug)]
     public class ErrorHandlingSample : IComponent, ISample
     {
