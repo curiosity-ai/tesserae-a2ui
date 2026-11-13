@@ -70,7 +70,7 @@ Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatN
 
 ### Dashboard components: the Tesserae extension catalog
 
-`TesseraeCatalog` (`https://curiosity.ai/a2ui/catalogs/tesserae/1.0`) adds `Table`, `Grid`, `Metric`, `Banner`, `Badge`, `PropertyGrid` and `Accordion`. Register it with `TesseraeCatalog.AddTo(host)` and name it per component with `@catalogId`. A child without `@catalogId` resolves against the surface's catalog (the spec's order), so a `Grid` of the extension holds `Text` of the basic catalog.
+`TesseraeCatalog` (`https://curiosity.ai/a2ui/catalogs/tesserae/1.0`) adds `Table`, `Grid`, `Metric`, `Banner`, `Badge`, `PropertyGrid`, `Accordion`, `CodeDiff`, `JsonViewer`, `Mermaid`, `Toggle`, `Rating`, `TagsInput` and `DateRange`. Register it with `TesseraeCatalog.AddTo(host)` and name it per component with `@catalogId`. A child without `@catalogId` resolves against the surface's catalog (the spec's order), so a `Grid` of the extension holds `Text` of the basic catalog.
 
 | Component | Properties |
 |---|---|
@@ -81,6 +81,10 @@ Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatN
 | `Badge` | `text`, `tone`, `outline`, `icon` |
 | `PropertyGrid` | `data` (an object), `fields`, `columns`, `editable` |
 | `Accordion` | `items` (`title`, `child`, `open`), `multiple` |
+| `CodeDiff` | `diff` (a unified diff, bindable), `format` (`line`, `side`), `fileList` |
+| `JsonViewer` | `data` (any JSON, bindable), `expandDepth`, `rootLabel`, `maxHeight` |
+| `Mermaid` | `source` (bindable), `zoom` |
+| `Toggle`, `Rating`, `TagsInput`, `DateRange` | `value` (two-way), `label`; `max`, `readOnly` / `placeholder`, `maxTags` / `{from, to}` as `yyyy-MM-dd` |
 
 ### Charts: the FlintChart extension
 

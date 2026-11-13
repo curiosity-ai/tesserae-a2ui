@@ -370,9 +370,15 @@ vocabulary; `spec` takes a whole Flint spec instead. `selected` is a path that r
                 'trend':[12,14,13,18,17,22,24,23,29],
                 'account':{'Name':'Acme GmbH','Plan':'Team','Seats':25,'Active':true,'Owner':'Ada Weber'},
                 'picked':{}},'components':[
-                {'id':'root','component':'Column','children':['title','banner','tiles','table','hint','details','who','faq']},
+                {'id':'root','component':'Column','children':['title','banner','notice','tiles','chips','table','hint','details','who','faq']},
                 {'id':'title','component':'Text','text':'# Quarter at a glance'},
                 {'id':'banner','component':'Banner','@catalogId':'__TC__','severity':'warning','title':'South is behind plan','text':'Ink and Paper are 12% under the quarterly target.'},
+                {'id':'notice','component':'Banner','@catalogId':'__TC__','severity':'info','title':'Two reports are waiting','text':'Review them before the quarter closes.','dismissible':true,'actionLabel':'Review','action':{'event':{'name':'review_clicked'}}},
+                {'id':'chips','component':'Grid','@catalogId':'__TC__','minColumnWidth':140,'gap':8,'children':['c1','c2','c3','c4']},
+                {'id':'c1','component':'Badge','@catalogId':'__TC__','text':'Healthy','tone':'success','icon':'check'},
+                {'id':'c2','component':'Badge','@catalogId':'__TC__','text':'3 warnings','tone':'warning','outline':true},
+                {'id':'c3','component':'Badge','@catalogId':'__TC__','text':'1 failure','tone':'danger'},
+                {'id':'c4','component':'Badge','@catalogId':'__TC__','text':'Beta','tone':'info','outline':true},
                 {'id':'tiles','component':'Grid','@catalogId':'__TC__','columns':3,'children':['m1','m2','m3']},
                 {'id':'m1','component':'Metric','@catalogId':'__TC__','label':'Revenue','value':'$32.0k','delta':'+12.3%','data':{'@path':'/trend'},'icon':'payment'},
                 {'id':'m2','component':'Metric','@catalogId':'__TC__','label':'Open tickets','value':41,'delta':'+6','good':'down'},
@@ -411,6 +417,57 @@ TesseraeCatalog.AddTo(host);   // host.RegisterCatalog(TesseraeCatalog.Create())
 | `Accordion` | `items` (`title`, `child`, `open`), `multiple` |
 
 Click a row, sort a column, edit a property: the data model on the right follows.",
+                Guide.Live(host, inspector));
+        }
+
+        public HTMLElement Render() => _content.Render();
+    }
+
+    [SampleDetails(Group = "Guides", Order = 57, Icon = UIcons.Layers)]
+    public class MoreComponentsSample : IComponent, ISample
+    {
+        private readonly IComponent _content;
+
+        public MoreComponentsSample()
+        {
+            var host = new A2UIHost();
+            var inspector = new Inspector(host);
+
+            TesseraeCatalog.AddTo(host);
+
+            var json = @"[{'version':'1.0','createSurface':{'surfaceId':'more','catalogId':'" + BASIC + @"','dataModel':{
+                'enabled':true,'stars':3,'tags':['ops','q4'],'range':{'from':'2026-10-01','to':'2026-12-31'},
+                'config':{'name':'Acme','limits':{'seats':25,'storageGb':200},'regions':['north','south','east'],'beta':true},
+                'diff':'--- a/notes.txt\n+++ b/notes.txt\n@@ -1,3 +1,3 @@\n Plan\n-Ship in November\n+Ship in December\n Owner: Ada\n',
+                'flow':'flowchart LR\n  A[Draft] --> B{Review}\n  B -- approved --> C([Published])\n  B -- changes --> A'},'components':[
+                {'id':'root','component':'Column','children':['t2','controls','echo','t4','json','diff','diff2','flow']},
+                {'id':'t2','component':'Text','text':'## Inputs'},
+                {'id':'controls','component':'Row','children':['toggle','rating','tags','range'],'align':'start'},
+                {'id':'toggle','component':'Toggle','@catalogId':'__TC__','label':'Notifications','value':{'@path':'/enabled'}},
+                {'id':'rating','component':'Rating','@catalogId':'__TC__','label':'Rating','value':{'@path':'/stars'}},
+                {'id':'tags','component':'TagsInput','@catalogId':'__TC__','label':'Tags','placeholder':'Add a tag','value':{'@path':'/tags'}},
+                {'id':'range','component':'DateRange','@catalogId':'__TC__','label':'Period','value':{'@path':'/range'}},
+                {'id':'echo','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Notifications ${/enabled}, rating ${/stars}, tags ${/tags}, period ${/range/from} to ${/range/to}'}}},
+                {'id':'t4','component':'Text','text':'## Data, changes and diagrams'},
+                {'id':'json','component':'JsonViewer','@catalogId':'__TC__','data':{'@path':'/config'},'rootLabel':'config','maxHeight':200},
+                {'id':'diff','component':'CodeDiff','@catalogId':'__TC__','diff':{'@path':'/diff'}},
+                {'id':'diff2','component':'CodeDiff','@catalogId':'__TC__','diff':{'@path':'/diff'},'format':'side','fileList':true},
+                {'id':'flow','component':'Mermaid','@catalogId':'__TC__','source':{'@path':'/flow'}}
+              ]}}]";
+
+            host.Process(J(json.Replace("__TC__", TesseraeCatalog.Id)));
+
+            _content = Guide.Page("More components", UIcons.Layers, "Toggle, Rating, TagsInput, DateRange, JsonViewer, CodeDiff and Mermaid", "GuideSamples.cs",
+@"The rest of the `TesseraeCatalog`, next to the dashboard components:
+
+| Component | Properties |
+|---|---|
+| `Toggle`, `Rating`, `TagsInput`, `DateRange` | `value` (two-way), `label`; `max`, `readOnly` / `placeholder`, `maxTags` / `{from, to}` as `yyyy-MM-dd` |
+| `JsonViewer` | `data` (any JSON, bindable), `expandDepth`, `rootLabel`, `maxHeight` |
+| `CodeDiff` | `diff` (a unified diff, bindable), `format` (`line`, `side`), `fileList` |
+| `Mermaid` | `source` (bindable), `zoom` |
+
+Change an input and the data model on the right follows.",
                 Guide.Live(host, inspector));
         }
 
