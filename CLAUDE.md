@@ -16,7 +16,7 @@ Tesserae.A2UI/                      the package
   src/Protocol/                     A2UIMessage (agent -> renderer, parsed), A2UIAction / A2UIError (renderer -> agent)
   src/Model/                        DataModel (JSON Pointer, subscriptions), Surface (components + data), EvalContext (scope + dependencies)
   src/Functions/                    Expressions (evaluator, ${...} parser), BasicFunctions, RegexDialect, Coerce
-  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), FlintChartCatalog (the one extension catalog: FlintChart), IconMap, MediaUrl
+  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), FlintChartCatalog (FlintChart), TesseraeCatalog (Table, Grid, Metric, Banner, Badge, PropertyGrid, Accordion), IconMap, MediaUrl
   src/Rendering/                    ComponentContext (what a factory gets), ComponentSlot (id in a scope), Disposer / LiveBinding
   src/Components/                   A2UIHost (the public entry), SurfaceView
   src/Interop/Js.cs                 the only direct JavaScript: Intl number/plural/date services, window.open, URL resolution
@@ -62,7 +62,7 @@ loads the entry itself first, `await Transpose.Require.RequireAsync(Transpose.Re
 - **The basic catalog is one shared instance, and overriding it is global on purpose.** `A2UIHost` starts with `BasicCatalog.Instance`; `Override`, `Decorate` and `OverrideFunction`
   change the registered catalog itself, for every host. `OwnCatalog` clones it the first time it is asked for, and `RegisterCatalog` / `Extend` mark a catalog as the host's own,
   for a change that must stay on one host. Code that serves several pages of one app (the gallery) uses `OwnCatalog`, or changing it on one page changes it on all.
-- **Catalogs resolve strictly**: a component's `@catalogId`, else the surface's `catalogId`, else an error (no fallback unless `A2UIHost.FallbackCatalog`).
+- **Catalogs resolve strictly**: a component's `@catalogId`, else the surface's `catalogId`, else an error (no fallback unless `A2UIHost.FallbackCatalog`). A child never takes its parent's catalog, so an extension container (`Grid`, `Accordion`) holds basic-catalog children without naming it.
   Functions are `rendererOnly` by default; the agent may call only `agentOnly` / `rendererOrAgent` ones; `requiresUserActivation` functions run only in an action.
 - **Everything the renderer cannot do is a protocol error, not an exception**: `A2UIHost.Report` dedupes, raises `OnError` and sends the envelope to the agent.
 

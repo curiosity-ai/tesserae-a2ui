@@ -27,6 +27,17 @@ export async function run({ browser, base, suite, L }) {
           await page.locator('.a2ui-surface').first().screenshot({ path: L.SCREENS + `/showcase-${theme}-${mode}.png` });
         } finally { await page.__ctx.close(); }
       });
+
+      await suite.test(`dashboard components render in ${theme} ${mode}`, async () => {
+        const page = await L.open(browser, base, 'Dashboard Components', { theme, dark, viewport: { width: 1500, height: 1500 } });
+        try {
+          await page.locator('.a2ui-surface').first().getByText('$9,200.50').waitFor({ timeout: 8000 });
+          const own = page.__errors.filter(e => !/Failed to load resource/.test(e));
+          L.assert(own.length === 0, 'console errors: ' + own.join(' | '));
+          L.assert(await page.locator('.a2ui-surface [data-a2ui-problem]').count() === 0, 'a component reported a problem');
+          await page.locator('.a2ui-surface').first().screenshot({ path: L.SCREENS + `/dashboard-${theme}-${mode}.png` });
+        } finally { await page.__ctx.close(); }
+      });
     }
   }
 }

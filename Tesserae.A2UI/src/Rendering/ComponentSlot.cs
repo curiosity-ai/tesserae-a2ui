@@ -91,7 +91,8 @@ namespace Tesserae.A2UI
             }
 
             var type      = def.GetString("component");
-            var catalogId = def.GetString("@catalogId") ?? CatalogId ?? Surface.CatalogId;
+            //The spec's order: the component's own @catalogId, then the surface's. A child does not take its parent's: a Grid from an extension catalog holds Text of the basic one.
+            var catalogId = def.GetString("@catalogId") ?? Surface.CatalogId;
             var catalog   = Surface.Host.ResolveCatalog(catalogId);
 
             if (catalog is null)

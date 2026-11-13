@@ -184,6 +184,33 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
+  await suite.test('Tesserae catalog: a Table sorts and reports a clicked row, a PropertyGrid edits the data, an Accordion opens, children keep the surface catalog', async () => {
+    const page = await L.open(browser, base, 'Dashboard Components');
+    try {
+      const stage = page.locator('.a2ui-surface');
+      await stage.getByText('Quarter at a glance').waitFor({ timeout: 8000 });
+      await stage.getByText('South is behind plan').waitFor();
+      await stage.getByText('Revenue', { exact: true }).first().waitFor();
+      // Table: rows from the data model, formatted; clicking a header sorts; clicking a row writes it and fires the action
+      await stage.getByText('$9,200.50').waitFor();
+      const firstCell = async () => (await stage.locator('[role=row]').nth(1).innerText()).split(/\s+/)[0];
+      await stage.getByText('Units', { exact: true }).first().click();
+      await L.sleep(600);
+      const sorted = await firstCell();
+      L.assert(sorted === 'Ink', 'sorted by Units ascending, first row is ' + sorted);
+      await stage.getByText('Paper', { exact: true }).first().click();
+      await stage.getByText('Clicked row: Paper').waitFor({ timeout: 3000 });
+      // PropertyGrid: editing a field writes it back into the data model
+      const owner = stage.locator('input').last();   // Owner is the last field
+      await owner.fill('Grace Hopper');
+      await owner.blur();
+      await stage.getByText('Owner in the data model: Grace Hopper').waitFor({ timeout: 3000 });
+      // Accordion: the second section opens on click and shows a basic-catalog Text child
+      await stage.getByText('Which formats does a Table know?').click();
+      await stage.getByText(/number, percent, currency, date/).waitFor({ timeout: 3000 });
+    } finally { await page.__ctx.close(); }
+  });
+
   await suite.test('agent function calls: callAgentFunction goes out, callRendererFunction is answered, openUrl is refused', async () => {
     const page = await L.open(browser, base, 'Actions and Functions');
     try {
