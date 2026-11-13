@@ -47,7 +47,7 @@ namespace Tesserae.A2UI
         /// fields in a Row sat 4px higher than the second, and it insets the label text by its own margin, so the label did not line up with the box
         /// under it. This is the label, the control, a 4px gap and one outer margin, whatever the position.
         /// </remarks>
-        private static IComponent Labelled(ComponentContext cx, IComponent control)
+        internal static IComponent Labelled(ComponentContext cx, IComponent control)
         {
             if (cx.Prop("label") is null) return control;
 

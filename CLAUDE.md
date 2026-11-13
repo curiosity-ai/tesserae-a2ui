@@ -16,7 +16,7 @@ Tesserae.A2UI/                      the package
   src/Protocol/                     A2UIMessage (agent -> renderer, parsed), A2UIAction / A2UIError (renderer -> agent)
   src/Model/                        DataModel (JSON Pointer, subscriptions), Surface (components + data), EvalContext (scope + dependencies)
   src/Functions/                    Expressions (evaluator, ${...} parser), BasicFunctions, RegexDialect, Coerce
-  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), FlintChartCatalog (FlintChart), TesseraeCatalog (Table, Grid, Metric, Banner, Badge, PropertyGrid, Accordion), IconMap, MediaUrl
+  src/Catalog/                      Catalog, BasicCatalog, BasicComponents.*.cs (the 18 components), FlintChartCatalog (FlintChart), TesseraeCatalog (Table, Grid, Metric, Banner, Badge, PropertyGrid, Accordion; Progress, Stepper, Timeline, CodeDiff, JsonViewer, Mermaid, Toggle, Rating, TagsInput, DateRange, Avatar, Carousel in TesseraeComponents.More.cs), IconMap, MediaUrl
   src/Rendering/                    ComponentContext (what a factory gets), ComponentSlot (id in a scope), Disposer / LiveBinding
   src/Components/                   A2UIHost (the public entry), SurfaceView
   src/Interop/Js.cs                 the only direct JavaScript: Intl number/plural/date services, window.open, URL resolution

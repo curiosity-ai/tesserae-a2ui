@@ -211,6 +211,34 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
+  await suite.test('Tesserae catalog, more components: Stepper, Toggle, Rating and TagsInput write the data model, the rest render', async () => {
+    const page = await L.open(browser, base, 'More Components');
+    try {
+      const stage = page.locator('.a2ui-surface');
+      await stage.getByText('Step index: 0').waitFor({ timeout: 8000 });
+      L.assert(await stage.locator('[data-a2ui-problem]').count() === 0, 'a component reported a problem');
+      await stage.locator('[data-a2ui-id="stepper"]').getByRole('button', { name: 'Next' }).click();
+      await stage.getByText('Step index: 1').waitFor({ timeout: 3000 });
+      await stage.getByText('Map the columns.').waitFor();
+      // Toggle: flipping it writes false
+      await stage.locator('[data-a2ui-id="toggle"]').click();
+      await stage.getByText(/Notifications false/).waitFor({ timeout: 3000 });
+      // Rating: the fifth star
+      await stage.locator('[data-a2ui-id="rating"] [class*="star"], [data-a2ui-id="rating"] i, [data-a2ui-id="rating"] svg, [data-a2ui-id="rating"] span').nth(4).click();
+      await stage.getByText(/rating 5/).waitFor({ timeout: 3000 });
+      // TagsInput: a typed tag is confirmed by Enter
+      const tagBox = stage.locator('[data-a2ui-id="tags"] input');
+      await tagBox.fill('urgent');
+      await tagBox.press('Enter');
+      await stage.getByText(/tags \["ops","q4","urgent"\]/).waitFor({ timeout: 3000 });
+      // Read-only components drew what they were given
+      await stage.getByText('Launch', { exact: true }).waitFor();
+      await stage.getByText('Ship in December').waitFor();
+      await stage.getByText('config', { exact: false }).first().waitFor();
+      await stage.locator('[data-a2ui-id="who"]').getByText('AW').waitFor();
+    } finally { await page.__ctx.close(); }
+  });
+
   await suite.test('agent function calls: callAgentFunction goes out, callRendererFunction is answered, openUrl is refused', async () => {
     const page = await L.open(browser, base, 'Actions and Functions');
     try {

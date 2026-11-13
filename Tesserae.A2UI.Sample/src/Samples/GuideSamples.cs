@@ -417,6 +417,77 @@ Click a row, sort a column, edit a property: the data model on the right follows
         public HTMLElement Render() => _content.Render();
     }
 
+    [SampleDetails(Group = "Guides", Order = 57, Icon = UIcons.Layers)]
+    public class MoreComponentsSample : IComponent, ISample
+    {
+        private readonly IComponent _content;
+
+        public MoreComponentsSample()
+        {
+            var host = new A2UIHost();
+            var inspector = new Inspector(host);
+
+            TesseraeCatalog.AddTo(host);
+
+            var json = @"[{'version':'1.0','createSurface':{'surfaceId':'more','catalogId':'" + BASIC + @"','dataModel':{
+                'progress':64,'step':0,'enabled':true,'stars':3,'tags':['ops','q4'],'range':{'from':'2026-10-01','to':'2026-12-31'},'slide':0,
+                'events':[{'title':'Kick-off','time':'Oct 3','text':'Scope agreed with the three regions.','color':'#0a7a3d'},
+                          {'title':'Beta','time':'Nov 11','text':'Fourteen customers invited.'},
+                          {'title':'Launch','time':'Dec 2','text':'Announcement and docs go out.','color':'#c0392b'}],
+                'config':{'name':'Acme','limits':{'seats':25,'storageGb':200},'regions':['north','south','east'],'beta':true},
+                'diff':'--- a/notes.txt\n+++ b/notes.txt\n@@ -1,3 +1,3 @@\n Plan\n-Ship in November\n+Ship in December\n Owner: Ada\n',
+                'flow':'flowchart LR\n  A[Draft] --> B{Review}\n  B -- approved --> C([Published])\n  B -- changes --> A'},'components':[
+                {'id':'root','component':'Column','children':['t1','prog','ring','stepper','stepinfo','t2','controls','echo','who','t3','timeline','t4','json','diff','flow','t5','carousel']},
+                {'id':'t1','component':'Text','text':'## Progress and steps'},
+                {'id':'prog','component':'Progress','@catalogId':'__TC__','value':{'@path':'/progress'},'label':'Import'},
+                {'id':'ring','component':'Progress','@catalogId':'__TC__','style':'ring','value':{'@path':'/progress'},'label':'Quota'},
+                {'id':'stepper','component':'Stepper','@catalogId':'__TC__','value':{'@path':'/step'},'items':[
+                  {'title':'Source','description':'Where from','child':'s1'},{'title':'Mapping','child':'s2'},{'title':'Review','child':'s3'}]},
+                {'id':'s1','component':'Text','text':'Pick the source file.'},{'id':'s2','component':'Text','text':'Map the columns.'},{'id':'s3','component':'Text','text':'Check and finish.'},
+                {'id':'stepinfo','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Step index: ${/step}'}}},
+                {'id':'t2','component':'Text','text':'## Inputs'},
+                {'id':'controls','component':'Row','children':['toggle','rating','tags','range'],'align':'start'},
+                {'id':'toggle','component':'Toggle','@catalogId':'__TC__','label':'Notifications','value':{'@path':'/enabled'}},
+                {'id':'rating','component':'Rating','@catalogId':'__TC__','label':'Rating','value':{'@path':'/stars'}},
+                {'id':'tags','component':'TagsInput','@catalogId':'__TC__','label':'Tags','placeholder':'Add a tag','value':{'@path':'/tags'}},
+                {'id':'range','component':'DateRange','@catalogId':'__TC__','label':'Period','value':{'@path':'/range'}},
+                {'id':'echo','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Notifications ${/enabled}, rating ${/stars}, tags ${/tags}, period ${/range/from} to ${/range/to}'}}},
+                {'id':'who','component':'Avatar','@catalogId':'__TC__','name':'Ada Weber','subtitle':'Owner','status':'online'},
+                {'id':'t3','component':'Text','text':'## Story'},
+                {'id':'timeline','component':'Timeline','@catalogId':'__TC__','data':{'@path':'/events'},'width':520},
+                {'id':'t4','component':'Text','text':'## Data, changes and diagrams'},
+                {'id':'json','component':'JsonViewer','@catalogId':'__TC__','data':{'@path':'/config'},'rootLabel':'config','maxHeight':200},
+                {'id':'diff','component':'CodeDiff','@catalogId':'__TC__','diff':{'@path':'/diff'}},
+                {'id':'flow','component':'Mermaid','@catalogId':'__TC__','source':{'@path':'/flow'}},
+                {'id':'t5','component':'Text','text':'## Slides'},
+                {'id':'carousel','component':'Carousel','@catalogId':'__TC__','value':{'@path':'/slide'},'children':['c1','c2','c3']},
+                {'id':'c1','component':'Text','text':'**One**: Table, Grid, Metric.'},{'id':'c2','component':'Text','text':'**Two**: Stepper, Timeline, Progress.'},{'id':'c3','component':'Text','text':'**Three**: inputs, diff, diagrams.'}
+              ]}}]";
+
+            host.Process(J(json.Replace("__TC__", TesseraeCatalog.Id)));
+
+            _content = Guide.Page("More components", UIcons.Layers, "Progress, Stepper, Timeline, CodeDiff, JsonViewer, Mermaid, Toggle, Rating, TagsInput, DateRange, Avatar and Carousel", "GuideSamples.cs",
+@"The rest of the `TesseraeCatalog`, next to the dashboard components:
+
+| Component | Properties |
+|---|---|
+| `Progress` | `value` (0 to 100, bindable; left out: indeterminate), `label`, `style` (`bar`, `ring`), `size`, `showValue` |
+| `Stepper` | `items` (`title`, `description`, `child`), `value` (current step, two-way) |
+| `Timeline` | `data` (list of `title`, `text`, `time`, `color`), `sameSide`, `width` |
+| `CodeDiff` | `diff` (a unified diff, bindable), `format` (`line`, `side`), `fileList` |
+| `JsonViewer` | `data` (any JSON, bindable), `expandDepth`, `rootLabel`, `maxHeight` |
+| `Mermaid` | `source` (bindable), `zoom` |
+| `Toggle`, `Rating`, `TagsInput`, `DateRange` | `value` (two-way), `label`; `max`, `readOnly` / `placeholder`, `maxTags` / `{from, to}` as `yyyy-MM-dd` |
+| `Avatar` | `name`, `image`, `status`, `size`, `subtitle` |
+| `Carousel` | `children` (slide ids), `value` (current slide, two-way) |
+
+Change an input and the data model on the right follows.",
+                Guide.Live(host, inspector));
+        }
+
+        public HTMLElement Render() => _content.Render();
+    }
+
     [SampleDetails(Group = "Guides", Order = 60, Icon = UIcons.Bug)]
     public class ErrorHandlingSample : IComponent, ISample
     {
