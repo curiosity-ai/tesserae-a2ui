@@ -370,9 +370,15 @@ vocabulary; `spec` takes a whole Flint spec instead. `selected` is a path that r
                 'trend':[12,14,13,18,17,22,24,23,29],
                 'account':{'Name':'Acme GmbH','Plan':'Team','Seats':25,'Active':true,'Owner':'Ada Weber'},
                 'picked':{}},'components':[
-                {'id':'root','component':'Column','children':['title','banner','tiles','table','hint','details','who','faq']},
+                {'id':'root','component':'Column','children':['title','banner','notice','tiles','chips','table','hint','details','who','faq']},
                 {'id':'title','component':'Text','text':'# Quarter at a glance'},
                 {'id':'banner','component':'Banner','@catalogId':'__TC__','severity':'warning','title':'South is behind plan','text':'Ink and Paper are 12% under the quarterly target.'},
+                {'id':'notice','component':'Banner','@catalogId':'__TC__','severity':'info','title':'Two reports are waiting','text':'Review them before the quarter closes.','dismissible':true,'actionLabel':'Review','action':{'event':{'name':'review_clicked'}}},
+                {'id':'chips','component':'Grid','@catalogId':'__TC__','minColumnWidth':140,'gap':8,'children':['c1','c2','c3','c4']},
+                {'id':'c1','component':'Badge','@catalogId':'__TC__','text':'Healthy','tone':'success','icon':'check'},
+                {'id':'c2','component':'Badge','@catalogId':'__TC__','text':'3 warnings','tone':'warning','outline':true},
+                {'id':'c3','component':'Badge','@catalogId':'__TC__','text':'1 failure','tone':'danger'},
+                {'id':'c4','component':'Badge','@catalogId':'__TC__','text':'Beta','tone':'info','outline':true},
                 {'id':'tiles','component':'Grid','@catalogId':'__TC__','columns':3,'children':['m1','m2','m3']},
                 {'id':'m1','component':'Metric','@catalogId':'__TC__','label':'Revenue','value':'$32.0k','delta':'+12.3%','data':{'@path':'/trend'},'icon':'payment'},
                 {'id':'m2','component':'Metric','@catalogId':'__TC__','label':'Open tickets','value':41,'delta':'+6','good':'down'},
@@ -430,21 +436,11 @@ Click a row, sort a column, edit a property: the data model on the right follows
             TesseraeCatalog.AddTo(host);
 
             var json = @"[{'version':'1.0','createSurface':{'surfaceId':'more','catalogId':'" + BASIC + @"','dataModel':{
-                'progress':64,'step':0,'enabled':true,'stars':3,'tags':['ops','q4'],'range':{'from':'2026-10-01','to':'2026-12-31'},'slide':0,
-                'events':[{'title':'Kick-off','time':'Oct 3','text':'Scope agreed with the three regions.','color':'#0a7a3d'},
-                          {'title':'Beta','time':'Nov 11','text':'Fourteen customers invited.'},
-                          {'title':'Launch','time':'Dec 2','text':'Announcement and docs go out.','color':'#c0392b'}],
+                'enabled':true,'stars':3,'tags':['ops','q4'],'range':{'from':'2026-10-01','to':'2026-12-31'},
                 'config':{'name':'Acme','limits':{'seats':25,'storageGb':200},'regions':['north','south','east'],'beta':true},
                 'diff':'--- a/notes.txt\n+++ b/notes.txt\n@@ -1,3 +1,3 @@\n Plan\n-Ship in November\n+Ship in December\n Owner: Ada\n',
                 'flow':'flowchart LR\n  A[Draft] --> B{Review}\n  B -- approved --> C([Published])\n  B -- changes --> A'},'components':[
-                {'id':'root','component':'Column','children':['t1','prog','ring','stepper','stepinfo','t2','controls','echo','who','t3','timeline','t4','json','diff','flow','t5','carousel']},
-                {'id':'t1','component':'Text','text':'## Progress and steps'},
-                {'id':'prog','component':'Progress','@catalogId':'__TC__','value':{'@path':'/progress'},'label':'Import'},
-                {'id':'ring','component':'Progress','@catalogId':'__TC__','style':'ring','value':{'@path':'/progress'},'label':'Quota'},
-                {'id':'stepper','component':'Stepper','@catalogId':'__TC__','value':{'@path':'/step'},'items':[
-                  {'title':'Source','description':'Where from','child':'s1'},{'title':'Mapping','child':'s2'},{'title':'Review','child':'s3'}]},
-                {'id':'s1','component':'Text','text':'Pick the source file.'},{'id':'s2','component':'Text','text':'Map the columns.'},{'id':'s3','component':'Text','text':'Check and finish.'},
-                {'id':'stepinfo','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Step index: ${/step}'}}},
+                {'id':'root','component':'Column','children':['t2','controls','echo','t4','json','diff','diff2','flow']},
                 {'id':'t2','component':'Text','text':'## Inputs'},
                 {'id':'controls','component':'Row','children':['toggle','rating','tags','range'],'align':'start'},
                 {'id':'toggle','component':'Toggle','@catalogId':'__TC__','label':'Notifications','value':{'@path':'/enabled'}},
@@ -452,34 +448,24 @@ Click a row, sort a column, edit a property: the data model on the right follows
                 {'id':'tags','component':'TagsInput','@catalogId':'__TC__','label':'Tags','placeholder':'Add a tag','value':{'@path':'/tags'}},
                 {'id':'range','component':'DateRange','@catalogId':'__TC__','label':'Period','value':{'@path':'/range'}},
                 {'id':'echo','component':'Text','variant':'caption','text':{'@call':'formatString','args':{'value':'Notifications ${/enabled}, rating ${/stars}, tags ${/tags}, period ${/range/from} to ${/range/to}'}}},
-                {'id':'who','component':'Avatar','@catalogId':'__TC__','name':'Ada Weber','subtitle':'Owner','status':'online'},
-                {'id':'t3','component':'Text','text':'## Story'},
-                {'id':'timeline','component':'Timeline','@catalogId':'__TC__','data':{'@path':'/events'},'width':520},
                 {'id':'t4','component':'Text','text':'## Data, changes and diagrams'},
                 {'id':'json','component':'JsonViewer','@catalogId':'__TC__','data':{'@path':'/config'},'rootLabel':'config','maxHeight':200},
                 {'id':'diff','component':'CodeDiff','@catalogId':'__TC__','diff':{'@path':'/diff'}},
-                {'id':'flow','component':'Mermaid','@catalogId':'__TC__','source':{'@path':'/flow'}},
-                {'id':'t5','component':'Text','text':'## Slides'},
-                {'id':'carousel','component':'Carousel','@catalogId':'__TC__','value':{'@path':'/slide'},'children':['c1','c2','c3']},
-                {'id':'c1','component':'Text','text':'**One**: Table, Grid, Metric.'},{'id':'c2','component':'Text','text':'**Two**: Stepper, Timeline, Progress.'},{'id':'c3','component':'Text','text':'**Three**: inputs, diff, diagrams.'}
+                {'id':'diff2','component':'CodeDiff','@catalogId':'__TC__','diff':{'@path':'/diff'},'format':'side','fileList':true},
+                {'id':'flow','component':'Mermaid','@catalogId':'__TC__','source':{'@path':'/flow'}}
               ]}}]";
 
             host.Process(J(json.Replace("__TC__", TesseraeCatalog.Id)));
 
-            _content = Guide.Page("More components", UIcons.Layers, "Progress, Stepper, Timeline, CodeDiff, JsonViewer, Mermaid, Toggle, Rating, TagsInput, DateRange, Avatar and Carousel", "GuideSamples.cs",
+            _content = Guide.Page("More components", UIcons.Layers, "Toggle, Rating, TagsInput, DateRange, JsonViewer, CodeDiff and Mermaid", "GuideSamples.cs",
 @"The rest of the `TesseraeCatalog`, next to the dashboard components:
 
 | Component | Properties |
 |---|---|
-| `Progress` | `value` (0 to 100, bindable; left out: indeterminate), `label`, `style` (`bar`, `ring`), `size`, `showValue` |
-| `Stepper` | `items` (`title`, `description`, `child`), `value` (current step, two-way) |
-| `Timeline` | `data` (list of `title`, `text`, `time`, `color`), `sameSide`, `width` |
-| `CodeDiff` | `diff` (a unified diff, bindable), `format` (`line`, `side`), `fileList` |
-| `JsonViewer` | `data` (any JSON, bindable), `expandDepth`, `rootLabel`, `maxHeight` |
-| `Mermaid` | `source` (bindable), `zoom` |
 | `Toggle`, `Rating`, `TagsInput`, `DateRange` | `value` (two-way), `label`; `max`, `readOnly` / `placeholder`, `maxTags` / `{from, to}` as `yyyy-MM-dd` |
-| `Avatar` | `name`, `image`, `status`, `size`, `subtitle` |
-| `Carousel` | `children` (slide ids), `value` (current slide, two-way) |
+| `JsonViewer` | `data` (any JSON, bindable), `expandDepth`, `rootLabel`, `maxHeight` |
+| `CodeDiff` | `diff` (a unified diff, bindable), `format` (`line`, `side`), `fileList` |
+| `Mermaid` | `source` (bindable), `zoom` |
 
 Change an input and the data model on the right follows.",
                 Guide.Live(host, inspector));

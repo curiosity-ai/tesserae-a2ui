@@ -8,8 +8,8 @@ namespace Tesserae.A2UI
 {
     /// <summary>
     /// An extension catalog of the Tesserae components a dashboard or a report is made of and the basic catalog has no counterpart for:
-    /// <c>Table</c>, <c>Grid</c>, <c>Metric</c>, <c>Banner</c>, <c>Badge</c>, <c>PropertyGrid</c>, <c>Accordion</c>, <c>Progress</c>, <c>Stepper</c>, <c>Timeline</c>,
-    /// <c>CodeDiff</c>, <c>JsonViewer</c>, <c>Mermaid</c>, <c>Toggle</c>, <c>Rating</c>, <c>TagsInput</c>, <c>DateRange</c>, <c>Avatar</c> and <c>Carousel</c>. A surface mixes it with the basic
+    /// <c>Table</c>, <c>Grid</c>, <c>Metric</c>, <c>Banner</c>, <c>Badge</c>, <c>PropertyGrid</c>, <c>Accordion</c>,
+    /// <c>CodeDiff</c>, <c>JsonViewer</c>, <c>Mermaid</c>, <c>Toggle</c>, <c>Rating</c>, <c>TagsInput</c> and <c>DateRange</c>. A surface mixes it with the basic
     /// catalog the way any second catalog is mixed: each component names it with <c>@catalogId</c>.
     /// </summary>
     public static class TesseraeCatalog
@@ -25,18 +25,13 @@ namespace Tesserae.A2UI
            .Component("Badge",        TesseraeComponents.Badge)
            .Component("PropertyGrid", TesseraeComponents.PropertyGrid)
            .Component("Accordion",    TesseraeComponents.Accordion)
-           .Component("Progress",     TesseraeComponents.Progress)
-           .Component("Stepper",      TesseraeComponents.Stepper)
-           .Component("Timeline",     TesseraeComponents.Timeline)
            .Component("CodeDiff",     TesseraeComponents.CodeDiff)
            .Component("JsonViewer",   TesseraeComponents.JsonViewer)
            .Component("Mermaid",      TesseraeComponents.Mermaid)
            .Component("Toggle",       TesseraeComponents.Toggle)
            .Component("Rating",       TesseraeComponents.Rating)
            .Component("TagsInput",    TesseraeComponents.TagsInput)
-           .Component("DateRange",    TesseraeComponents.DateRange)
-           .Component("Avatar",       TesseraeComponents.Avatar)
-           .Component("Carousel",     TesseraeComponents.Carousel);
+           .Component("DateRange",    TesseraeComponents.DateRange);
 
         /// <summary>Registers the extension on a host (or its private copy of the catalogs).</summary>
         public static A2UIHost AddTo(A2UIHost host) => host.RegisterCatalog(Create());

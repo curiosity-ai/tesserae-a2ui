@@ -200,6 +200,15 @@ export async function run({ browser, base, suite, L }) {
       L.assert(sorted === 'Ink', 'sorted by Units ascending, first row is ' + sorted);
       await stage.getByText('Paper', { exact: true }).first().click();
       await stage.getByText('Clicked row: Paper').waitFor({ timeout: 3000 });
+      // Banner: its action goes to the agent and the dismiss removes it; Badge and a Grid with minColumnWidth lay out in several columns
+      await stage.getByText('Two reports are waiting').waitFor();
+      const cols = await stage.locator('[data-a2ui-id="chips"]').evaluate(e => getComputedStyle(e).gridTemplateColumns.split(' ').length);
+      L.assert(cols >= 3, 'the chips grid has ' + cols + ' columns');
+      await stage.locator('[data-a2ui-id="notice"]').getByRole('button', { name: 'Review' }).click();
+      await tab(page, 'To agent').click();
+      await page.getByText('review_clicked').first().waitFor({ timeout: 3000 });
+      await stage.locator('[data-a2ui-id="notice"]').getByRole('button', { name: /dismiss|close/i }).click();
+      await stage.getByText('Two reports are waiting').waitFor({ state: 'hidden', timeout: 3000 });
       // PropertyGrid: editing a field writes it back into the data model
       const owner = stage.locator('input').last();   // Owner is the last field
       await owner.fill('Grace Hopper');
@@ -211,31 +220,33 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
-  await suite.test('Tesserae catalog, more components: Stepper, Toggle, Rating and TagsInput write the data model, the rest render', async () => {
+  await suite.test('Tesserae catalog, more components: Toggle, Rating, TagsInput and DateRange write the data model, JsonViewer, CodeDiff and Mermaid draw', async () => {
     const page = await L.open(browser, base, 'More Components');
     try {
       const stage = page.locator('.a2ui-surface');
-      await stage.getByText('Step index: 0').waitFor({ timeout: 8000 });
+      await stage.getByText(/Notifications true/).waitFor({ timeout: 8000 });
       L.assert(await stage.locator('[data-a2ui-problem]').count() === 0, 'a component reported a problem');
-      await stage.locator('[data-a2ui-id="stepper"]').getByRole('button', { name: 'Next' }).click();
-      await stage.getByText('Step index: 1').waitFor({ timeout: 3000 });
-      await stage.getByText('Map the columns.').waitFor();
       // Toggle: flipping it writes false
       await stage.locator('[data-a2ui-id="toggle"]').click();
       await stage.getByText(/Notifications false/).waitFor({ timeout: 3000 });
       // Rating: the fifth star
       await stage.locator('[data-a2ui-id="rating"] [class*="star"], [data-a2ui-id="rating"] i, [data-a2ui-id="rating"] svg, [data-a2ui-id="rating"] span').nth(4).click();
       await stage.getByText(/rating 5/).waitFor({ timeout: 3000 });
-      // TagsInput: a typed tag is confirmed by Enter
+      // TagsInput: a typed tag is confirmed by Enter, and a tag can be removed
       const tagBox = stage.locator('[data-a2ui-id="tags"] input');
       await tagBox.fill('urgent');
       await tagBox.press('Enter');
       await stage.getByText(/tags \["ops","q4","urgent"\]/).waitFor({ timeout: 3000 });
-      // Read-only components drew what they were given
-      await stage.getByText('Launch', { exact: true }).waitFor();
-      await stage.getByText('Ship in December').waitFor();
-      await stage.getByText('config', { exact: false }).first().waitFor();
-      await stage.locator('[data-a2ui-id="who"]').getByText('AW').waitFor();
+      // DateRange: typing a new end date writes it
+      const dates = stage.locator('[data-a2ui-id="range"] input[type="date"]');
+      await dates.nth(1).fill('2027-01-15');
+      await stage.getByText(/period 2026-10-01 to 2027-01-15/).waitFor({ timeout: 3000 });
+      // JsonViewer, CodeDiff (line by line and side by side) and Mermaid drew what they were given
+      await stage.locator('[data-a2ui-id="json"]').getByText('config').first().waitFor();
+      await stage.locator('[data-a2ui-id="diff"]').getByText('Ship in December').waitFor();
+      await stage.locator('[data-a2ui-id="diff2"]').getByText('Ship in December').waitFor();
+      await stage.locator('[data-a2ui-id="flow"] svg').first().waitFor({ timeout: 15000 });
+      L.assert(await stage.locator('[data-a2ui-id="flow"]').getByText('Published').count() > 0, 'the diagram has its nodes');
     } finally { await page.__ctx.close(); }
   });
 
