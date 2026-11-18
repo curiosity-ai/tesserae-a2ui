@@ -569,8 +569,10 @@ body.tss-theme-memphis .tss-btn:focus {
 }
 
 body.tss-theme-memphis .tss-btn:focus-visible {
-    outline: 3px solid var(--tss-mp-focus);
-    outline-offset: 3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-mp-focus);
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -2067,8 +2069,10 @@ body.tss-theme-memphis .tss-pivot-tab-fallback {
 
 body.tss-theme-memphis .tss-pivot-titlebar:focus-visible,
 body.tss-theme-memphis .tss-pivot-titlebar > .tss-btn.tss-pivot-tab:focus-visible {
-    outline: 3px solid var(--tss-mp-focus);
-    outline-offset: -3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-mp-focus);
+    --tss-btn-focus-width: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2656,6 +2660,10 @@ body.tss-theme-memphis .tss-omnibox-model-selector-divider {
     background: rgb(var(--tss-default-separator-color-root));
 }
 
+body.tss-theme-memphis .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-memphis .tss-sectiontitle-title {
     font-family: var(--tss-mp-display);
@@ -3082,8 +3090,10 @@ body.tss-theme-memphis .tss-sidebar .tss-sidebar-command.tss-btn {
 }
 
 body.tss-theme-memphis .tss-sidebar .tss-sidebar-btn.tss-btn:focus-visible {
-    outline: 3px solid var(--tss-mp-focus);
-    outline-offset: -3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-mp-focus);
+    --tss-btn-focus-width: 3px;
 }
 
 body.tss-theme-memphis .tss-sidebar .tss-searchbox-container {
@@ -3464,8 +3474,10 @@ body.tss-theme-memphis.tss-dark-mode .tss-icon-toggle > .tss-btn.tss-icon-toggle
 }
 
 body.tss-theme-memphis .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline: 3px solid var(--tss-mp-focus);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-mp-focus);
+    --tss-btn-focus-width: 3px;
 }
 
 body.tss-theme-memphis .tss-icon-toggle.tss-rounded-sm,
@@ -4131,8 +4143,7 @@ body.tss-theme-memphis .tss-tree-selection-multiple .tss-tree-item-content.tss-p
 }
 
 body.tss-theme-memphis .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 3px solid var(--tss-mp-focus);
-    outline-offset: 0;
+    box-shadow: inset 0 0 0 3px var(--tss-mp-focus);
 }
 
 body.tss-theme-memphis .tss-tree-chevron:hover,

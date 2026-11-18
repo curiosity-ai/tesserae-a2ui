@@ -633,8 +633,10 @@ body.tss-theme-washi .tss-btn:focus {
 }
 
 body.tss-theme-washi .tss-btn:focus-visible {
-    outline: 1.5px solid var(--tss-wa-thread);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-wa-thread);
+    --tss-btn-focus-width: 1.5px;
 }
 
 
@@ -2499,6 +2501,10 @@ body.tss-theme-washi .tss-omnibox-container.tss-omnibox-rounded-full {
     --tss-omnibox-radius: 999px;
 }
 
+body.tss-theme-washi .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-washi .tss-toolagent-trigger {
     background: rgb(var(--tss-secondary-background-color-root));
@@ -3101,8 +3107,10 @@ body.tss-theme-washi .tss-sidebar.tss-sidebar-closed .tss-sidebar-btn-closed-ico
 }
 
 body.tss-theme-washi .tss-sidebar .tss-sidebar-btn.tss-btn:focus-visible {
-    outline: 1.5px solid var(--tss-wa-thread);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-wa-thread);
+    --tss-btn-focus-width: 1.5px;
 }
 
 body.tss-theme-washi .tss-sidebar-btn-rounded > .tss-btn,
@@ -3430,7 +3438,10 @@ body.tss-theme-washi.tss-dark-mode .tss-icon-toggle:not(.tss-ai) > .tss-btn.tss-
 }
 
 body.tss-theme-washi .tss-icon-toggle:not(.tss-ai) > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline: 1.5px solid var(--tss-wa-thread);
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-wa-thread);
+    --tss-btn-focus-width: 1.5px;
 }
 
 
@@ -3869,7 +3880,7 @@ body.tss-theme-washi .tss-tree-item-content.tss-selected .tss-tree-icon {
 }
 
 body.tss-theme-washi .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 1.5px solid var(--tss-wa-thread);
+    box-shadow: inset 0 0 0 1.5px var(--tss-wa-thread);
 }
 
 body.tss-theme-washi .tss-tree-chevron {

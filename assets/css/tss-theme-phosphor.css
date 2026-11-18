@@ -628,6 +628,10 @@ body.tss-theme-phosphor .tss-btn.tss-btn-default:not(.tss-disabled):focus-visibl
     color: var(--tss-ph-on-cursor);
 }
 
+body.tss-theme-phosphor .tss-btn.tss-btn-default:not(.tss-disabled):focus-visible {
+    box-shadow: none;
+}
+
 body.tss-theme-phosphor .tss-btn.tss-btn-default:not(.tss-disabled):active {
     background-color: rgba(var(--tss-ph-cursor-root), 0.78);
 }
@@ -651,8 +655,9 @@ body.tss-theme-phosphor.tss-dark-mode .tss-btn.tss-btn-warning:not(.tss-disabled
 }
 
 body.tss-theme-phosphor .tss-btn:is(.tss-btn-primary, .tss-btn-danger, .tss-btn-success, .tss-btn-warning):not(.tss-disabled):focus-visible {
-    outline: 1px solid var(--tss-ph-cursor);
-    outline-offset: 3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-width: 1px;
 }
 
 body.tss-theme-phosphor .tss-btn.tss-btn-warning:not(.tss-disabled):not(.tss-btn-nobg):not(.tss-btn-link),
@@ -2459,6 +2464,10 @@ body.tss-theme-phosphor .tss-omnibox-search-trigger-btn {
     border-radius: 0;
 }
 
+body.tss-theme-phosphor .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-phosphor .tss-sectiontitle-title {
     font-family: var(--tss-ph-display);
@@ -2788,8 +2797,10 @@ body.tss-theme-phosphor .tss-sidebar .tss-btn.tss-btn-default:not(.tss-disabled)
 }
 
 body.tss-theme-phosphor .tss-sidebar .tss-btn:focus-visible {
-    outline: 1px solid var(--tss-ph-cursor);
-    outline-offset: -1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-ph-cursor);
+    --tss-btn-focus-width: 1px;
 }
 
 body.tss-theme-phosphor .tss-sidebar-btn.tss-sidebar-selected:not(.tss-disabled),
@@ -3106,8 +3117,10 @@ body.tss-theme-phosphor.tss-dark-mode .tss-icon-toggle > .tss-btn.tss-icon-toggl
 }
 
 body.tss-theme-phosphor .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline: 1px solid var(--tss-ph-cursor);
-    outline-offset: -3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-ph-cursor);
+    --tss-btn-focus-width: 1px;
 }
 
 
@@ -3496,8 +3509,7 @@ body.tss-theme-phosphor .tss-tree-item-content.tss-selected * {
 }
 
 body.tss-theme-phosphor .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 1px solid var(--tss-ph-cursor);
-    outline-offset: -1px;
+    box-shadow: inset 0 0 0 1px var(--tss-ph-cursor);
 }
 
 body.tss-theme-phosphor .tss-tree-children {

@@ -907,8 +907,10 @@ body.tss-theme-graustufe .tss-btn:focus {
 }
 
 body.tss-theme-graustufe .tss-btn:focus-visible {
-    outline: var(--tss-gs-focus);
-    outline-offset: var(--tss-gs-focus-offset);
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-gs-0);
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -969,8 +971,9 @@ body.tss-theme-graustufe .tss-btn.tss-btn-danger:not(.tss-disabled):not(.tss-btn
 }
 
 body.tss-theme-graustufe .tss-btn.tss-btn-danger:not(.tss-disabled):not(.tss-btn-nobg):not(.tss-btn-link):focus-visible {
-    outline: var(--tss-gs-focus);
-    outline-offset: 3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -1024,8 +1027,10 @@ body.tss-theme-graustufe .tss-btn.tss-btn-link:hover > span {
 }
 
 body.tss-theme-graustufe .tss-btn.tss-btn-link:focus-visible {
-    outline: var(--tss-gs-focus);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-gs-0);
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -2781,6 +2786,10 @@ body.tss-theme-graustufe .tss-btn.tss-omnibox-dictate-btn.tss-omnibox-dictating-
     animation: none;
 }
 
+body.tss-theme-graustufe .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-graustufe .tss-toolagent-trigger.tss-toolagent-trigger-active {
     border-color: var(--tss-gs-0);
@@ -3409,8 +3418,10 @@ body.tss-theme-graustufe.tss-dark-mode .tss-icon-toggle > .tss-btn.tss-icon-togg
 }
 
 body.tss-theme-graustufe .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline: var(--tss-gs-focus);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-gs-0);
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -3989,7 +4000,7 @@ body.tss-theme-graustufe .tss-tree-item-content.tss-selected * {
 }
 
 body.tss-theme-graustufe .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: var(--tss-gs-focus);
+    box-shadow: inset 0 0 0 3px var(--tss-gs-0);
 }
 
 body.tss-theme-graustufe .tss-tree-chevron:hover,

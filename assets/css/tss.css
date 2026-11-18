@@ -126926,6 +126926,7 @@ line-height: inherit;
     --tss-border-radius-lg: 8px;
     --tss-border-radius-xl: 12px;
     --tss-border-radius-full: 9999px;
+    --tss-focus-ring-room: 6px;
     --tss-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --tss-shadow-sm-hover: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
     --tss-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -129099,8 +129100,40 @@ a {
         animation: none !important;
     }
 
+.tss-btn {
+    --tss-btn-focus-color: var(--tss-primary-border-color);
+    --tss-btn-focus-width: 2px;
+    --tss-btn-focus-gap: 0px;
+    --tss-btn-focus-gap-color: transparent;
+    --tss-btn-focus-shadow: inset 0 0 0 var(--tss-btn-focus-gap) var(--tss-btn-focus-gap-color), inset 0 0 0 calc(var(--tss-btn-focus-gap) + var(--tss-btn-focus-width)) var(--tss-btn-focus-color);
+}
+
+.tss-btn.tss-btn-primary:not(.tss-btn-nobg):not(.tss-btn-link) {
+    --tss-btn-focus-color: var(--tss-primary-foreground-color);
+    --tss-btn-focus-gap: 2px;
+    --tss-btn-focus-gap-color: var(--tss-primary-background-color);
+}
+
+.tss-btn.tss-btn-danger:not(.tss-btn-nobg):not(.tss-btn-link) {
+    --tss-btn-focus-color: var(--tss-danger-foreground-color);
+    --tss-btn-focus-gap: 2px;
+    --tss-btn-focus-gap-color: var(--tss-danger-background-color);
+}
+
+.tss-btn.tss-btn-success:not(.tss-btn-nobg):not(.tss-btn-link) {
+    --tss-btn-focus-color: var(--tss-success-foreground-color);
+    --tss-btn-focus-gap: 2px;
+    --tss-btn-focus-gap-color: var(--tss-success-background-color);
+}
+
+.tss-btn.tss-btn-warning:not(.tss-btn-nobg):not(.tss-btn-link) {
+    --tss-btn-focus-color: var(--tss-warning-foreground-color);
+    --tss-btn-focus-gap: 2px;
+    --tss-btn-focus-gap-color: var(--tss-warning-background-color);
+}
+
 .tss-btn:not(.tss-disabled):focus-visible {
-    box-shadow: var(--tss-ring-offset-shadow), var(--tss-ring-shadow);
+    box-shadow: var(--tss-btn-focus-shadow);
 }
 
 .tss-btn.tss-btn-click-animation > i {
@@ -129217,6 +129250,10 @@ a {
 }
 
 .tss-label.tss-stack-item:first-child {
+    margin-top: 0px;
+}
+
+.tss-stack-horizontal > .tss-label.tss-stack-item {
     margin-top: 0px;
 }
 
@@ -129495,7 +129532,7 @@ a {
 
     .tss-textbox:focus {
         border-color: var(--tss-primary-border-color);
-        box-shadow: var(--tss-ring-offset-shadow), var(--tss-ring-shadow);
+        box-shadow: inset 0 0 0 1px var(--tss-primary-border-color);
     }
 
 .tss-textbox-container {
@@ -129672,6 +129709,32 @@ a {
 @media (prefers-reduced-motion: reduce) {
     .tss-textbox-dictate-btn.tss-btn { transition: none; }
     .tss-textbox-dictate-btn.tss-btn.tss-textbox-dictating-btn > i { animation: none; }
+}
+
+.tss-initial-value {
+    position: absolute;
+    box-sizing: border-box;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+    color: var(--tss-default-foreground-color);
+    opacity: 0.85;
+}
+
+.tss-initial-value.tss-initial-value-multiline {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.tss-has-initial-value > .tss-textbox {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+.tss-has-initial-value > .tss-textbox::placeholder {
+    opacity: 0 !important;
 }
 
 .tss-textarea {
@@ -131668,6 +131731,8 @@ i.tss-card-title-icon {
 
 .tss-dropdown-popup > .tss-dropdown-searchbox {
     flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .tss-dropdown-popup > .tss-dropdown-items {
@@ -133139,6 +133204,8 @@ i.tss-card-title-icon {
     flex-direction: column;
     height: 100%;
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: var(--tss-focus-ring-room);
     position: relative;
 }
 
@@ -133151,6 +133218,8 @@ i.tss-card-title-icon {
     align-items: stretch;
     width: 100%;
     background: var(--tss-secondary-background-color);
+    position: relative;
+    z-index: 1;
 }
 
 .tss-pivot-titlebar-scroller {
@@ -133226,8 +133295,8 @@ i.tss-card-title-icon {
 }
 
 .tss-pivot-content {
-    margin: 0;
-    padding: 0;
+    margin: calc(-1 * var(--tss-focus-ring-room));
+    padding: var(--tss-focus-ring-room);
     flex-grow: 1;
     flex-shrink: 1;
     overflow-y: auto;
@@ -133403,6 +133472,8 @@ i.tss-card-title-icon {
 .tss-cardpivot-content {
     flex-grow: 1;
     overflow: auto;
+    padding: var(--tss-focus-ring-room);
+    margin: calc(-1 * var(--tss-focus-ring-room));
     display: flex;
     flex-direction: column;
 }
@@ -133529,6 +133600,8 @@ i.tss-card-title-icon {
 .tss-segmentedpivot-content {
     flex-grow: 1;
     overflow: auto;
+    padding: var(--tss-focus-ring-room);
+    margin: calc(-1 * var(--tss-focus-ring-room));
     display: flex;
     flex-direction: column;
 }
@@ -135194,7 +135267,7 @@ body.tss-modal-dragging .tss-modal-draggable {
 
     .tss-searchbox-container:focus-within {
         border-color: var(--tss-primary-border-color);
-        box-shadow: var(--tss-ring-offset-shadow), var(--tss-ring-shadow);
+        box-shadow: inset 0 0 0 1px var(--tss-primary-border-color);
     }
 
 .tss-searchbox-icon {
@@ -135443,6 +135516,10 @@ body.tss-modal-dragging .tss-modal-draggable {
 .tss-searchable-list-no-match {
     opacity:0.4;
     filter:saturate(0);
+}
+
+.tss-searchbox-container .tss-searchbox.tss-searchbox:focus-visible {
+    outline: none;
 }
 
 
@@ -135739,14 +135816,24 @@ mark[data-marked] {
     color: var(--tss-disabled-foreground-color);
 }
 
-.tss-omnibox-container:not(.tss-omnibox-chat-and-search):hover .tss-omnibox-search-container {
+.tss-omnibox-container:not(.tss-disabled):hover {
     border-color: var(--tss-default-foreground-color);
     box-shadow: var(--tss-shadow-sm-hover);
 }
 
-.tss-omnibox-container:focus-within .tss-omnibox-search-container {
+.tss-omnibox-container:not(.tss-disabled):focus-within {
     border-color: var(--tss-primary-border-color);
-    box-shadow: var(--tss-ring-offset-shadow), var(--tss-ring-shadow);
+}
+
+.tss-omnibox-container:not(.tss-disabled):focus-within::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-style: solid;
+    border-width: inherit;
+    border-color: inherit;
+    border-radius: max(0px, calc(var(--tss-omnibox-radius) - 1px));
+    pointer-events: none;
 }
 
 .tss-omnibox-search-input-container {
@@ -136355,6 +136442,11 @@ mark[data-marked] {
     font-size: 10px;
 }
 
+.tss-omnibox-container .tss-omnibox-search-input:focus-visible,
+.tss-omnibox-container .tss-omnibox-chat-input:focus-visible {
+    outline: none;
+}
+
 .tss-toolagent-trigger {
     position: relative;
     display: inline-flex;
@@ -136599,7 +136691,7 @@ mark[data-marked] {
 
 .tss-annotated-text-container:focus-within {
     border-color: var(--tss-primary-border-color);
-    box-shadow: var(--tss-ring-offset-shadow), var(--tss-ring-shadow);
+    box-shadow: inset 0 0 0 1px var(--tss-primary-border-color);
 }
 
 .tss-annotated-text-container.tss-disabled {
@@ -136732,6 +136824,10 @@ mark[data-marked] {
     letter-spacing: 0.02em;
 }
 
+.tss-annotated-text-container > .tss-annotated-text-input:focus-visible {
+    outline: none;
+}
+
 .tss-sectiontitle {
     padding-bottom: 16px;
 }
@@ -136801,6 +136897,144 @@ mark[data-marked] {
 .tss-sectionstack .tss-sectionstack-item:last-child {
     margin-bottom: 0px !important;
 }
+.tss-hub {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: var(--tss-default-background-color);
+}
+
+.tss-hub-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    min-height: 36px;
+    box-sizing: border-box;
+    gap: 8px;
+}
+
+.tss-hub-trail {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.tss-hub-commands {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 4px;
+}
+
+    .tss-hub-commands:empty {
+        display: none;
+    }
+
+    .tss-hub-commands > .tss-hub-command {
+        flex-shrink: 0;
+    }
+
+    .tss-hub-commands > .tss-searchbox-container,
+    .tss-hub-commands > .tss-textbox,
+    .tss-hub-commands > .tss-picker-container {
+        width: auto;
+    }
+
+.tss-hub-crumb {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    color: var(--tss-secondary-foreground-color);
+}
+
+    .tss-hub-crumb:has(> .tss-collapse) {
+        display: none;
+    }
+
+    .tss-hub-crumb + .tss-hub-crumb::before {
+        font-family: uicons-regular-rounded !important;
+        font-style: normal;
+        font-weight: normal !important;
+        content: var(--uicon-var-angle-right);
+        font-size: var(--tss-font-size-xsmall);
+        line-height: 1;
+        padding: 0 4px;
+        flex: 0 0 auto;
+        color: var(--tss-secondary-foreground-color);
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    .tss-hub-crumb:first-child:is(.tss-collapse, :has(> .tss-collapse)) + .tss-hub-crumb::before {
+        display: none;
+    }
+
+.tss-hub-crumb > .tss-hub-crumb-text {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: var(--tss-border-radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+    .tss-hub-crumb .tss-hub-crumb-label {
+        color: inherit;
+        font-size: var(--tss-font-size-xsmall);
+        font-weight: var(--tss-font-weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+.tss-hub-crumb > .tss-hub-crumb-link {
+    cursor: pointer;
+}
+
+    .tss-hub-crumb > .tss-hub-crumb-link:hover {
+        color: var(--tss-default-foreground-hover-color);
+        background: var(--tss-default-background-hover-color);
+    }
+
+    .tss-hub-crumb > .tss-hub-crumb-link:focus {
+        outline: none;
+    }
+
+    .tss-hub-crumb > .tss-hub-crumb-link:focus-visible {
+        box-shadow: inset 0 0 0 2px var(--tss-primary-border-color);
+    }
+
+.tss-hub-crumb:not(.tss-hub-crumb-root):not(:last-child) {
+    flex-shrink: 1000;
+}
+
+.tss-hub-crumb:not(.tss-hub-crumb-root):has(> .tss-hub-crumb-text) {
+    min-width: 84px;
+}
+
+.tss-hub-crumb > .tss-hub-crumb-text {
+    overflow: hidden;
+}
+
+.tss-hub-crumb-root {
+    flex-shrink: 0;
+    max-width: 50%;
+}
+
 .tss-slider-div {
     padding-bottom: 8px;
 }
@@ -137099,8 +137333,9 @@ mark[data-marked] {
 }
 
 .tss-time-histogram-picker-thumb:focus {
-    outline: 2px solid var(--tss-ring-color);
-    outline-offset: 2px;
+    outline: none;
+    border-color: var(--tss-primary-border-color);
+    box-shadow: inset 0 0 0 2px var(--tss-primary-border-color);
 }
 
 .tss-time-histogram-picker-drag-band,
@@ -140362,9 +140597,9 @@ body.tss-mobile .tss-message-horizontal {
         color: color-mix(in srgb, var(--tss-default-foreground-color) 70%, var(--tss-secondary-background-color));
     }
 
-    .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:focus-visible {
-        outline: 2px solid var(--tss-primary-background-color);
-        outline-offset: -1px;
+    .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:not(.tss-disabled):focus-visible,
+    .tss-icon-toggle > .tss-btn.tss-icon-toggle-item.tss-icon-toggle-item-selected:not(.tss-disabled):focus-visible {
+        box-shadow: var(--tss-btn-focus-shadow);
     }
 
     .tss-icon-toggle > .tss-btn.tss-icon-toggle-item.tss-disabled {
@@ -141781,6 +142016,10 @@ body.tss-mobile .tss-message-horizontal {
     border-radius: 0;
 }
 
+.tippy-box[data-theme~='tss-popover'] .tss-fontcolor-default {
+    color: var(--tss-default-foreground-color);
+}
+
 .tippy-box[data-theme~='tss-popover'] > .tippy-content {
     padding: 0;
     background-color: transparent;
@@ -142713,8 +142952,7 @@ body.tss-mobile .tss-message-horizontal {
 }
 
 .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 2px solid var(--tss-ring-color);
-    outline-offset: -2px;
+    box-shadow: inset 0 0 0 2px var(--tss-primary-border-color);
 }
 
 .tss-tree-item-content:hover {
@@ -147937,10 +148175,15 @@ body.tss-mobile .tss-message-horizontal {
     background: var(--tss-default-background-hover-color);
 }
 
-.tss-actioncard-action:focus-visible,
+.tss-actioncard-action:focus-visible {
+    outline: none;
+    border-color: var(--tss-primary-border-color);
+    box-shadow: inset 0 0 0 1px var(--tss-primary-border-color);
+}
+
 .tss-actioncard-more:focus-visible {
-    outline: 2px solid var(--tss-ring-color);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--tss-primary-border-color);
 }
 
 .tss-actioncard-action-icon {
@@ -152187,7 +152430,7 @@ i.tss-icon.tss-ai {
 }
 
 .tss-icon-toggle.tss-ai > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline-color: var(--tss-ai-accent);
+    --tss-btn-focus-color: var(--tss-ai-accent);
 }
 
 
@@ -152256,4 +152499,38 @@ i.tss-icon.tss-ai {
 
 .tss-dark-mode .tss-textbox.tss-ai:focus {
     box-shadow: 0 0 0 3px rgba(var(--tss-colors-purple-400-root), 0.28);
+}
+
+
+.tss-textbox-container.tss-textbox-ai-badged {
+    --tss-ai-trail: 0px;
+}
+
+.tss-textbox-container.tss-textbox-ai-badged.tss-textbox-has-dictation {
+    --tss-ai-trail: 32px;
+}
+
+.tss-textbox-container.tss-textbox-ai-badged.tss-textbox-spinning {
+    --tss-ai-trail: 28px;
+}
+
+.tss-textbox-container.tss-textbox-ai-badged.tss-textbox-has-dictation.tss-textbox-spinning {
+    --tss-ai-trail: 60px;
+}
+
+.tss-textbox-ai-badge {
+    position: absolute;
+    top: 4px;
+    right: calc(8px + var(--tss-ai-trail, 0px));
+    height: 28px;
+    max-width: 96px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.tss-textbox-container.tss-textbox-ai-badged > .tss-textbox.tss-ai {
+    padding-right: calc(var(--tss-ai-trail, 0px) + 84px);
 }

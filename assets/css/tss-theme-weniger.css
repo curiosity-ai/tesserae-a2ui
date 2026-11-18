@@ -627,8 +627,9 @@ body.tss-theme-weniger .tss-btn:focus {
 }
 
 body.tss-theme-weniger .tss-btn:focus-visible {
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 
@@ -1677,8 +1678,9 @@ body.tss-theme-weniger .tss-breadcrumb-overflow .tss-btn:hover {
 }
 
 body.tss-theme-weniger .tss-breadcrumb .tss-btn:focus-visible {
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 
@@ -3256,8 +3258,9 @@ body.tss-theme-weniger .tss-pivot-tab-fallback {
 
 body.tss-theme-weniger .tss-pivot-titlebar:focus-visible,
 body.tss-theme-weniger .tss-pivot-titlebar > .tss-btn.tss-pivot-tab:focus-visible {
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5067,6 +5070,10 @@ body.tss-theme-weniger .tss-omnibox-help-example {
     }
 }
 
+body.tss-theme-weniger .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-weniger .tss-toolagent-trigger {
     border: 1px solid var(--tss-wg-key-edge);
@@ -6082,8 +6089,9 @@ body.tss-theme-weniger .tss-sidebar-btn-has-icon-click.tss-btn > .tss-btn-with-i
 }
 
 body.tss-theme-weniger .tss-sidebar .tss-sidebar-btn.tss-btn:focus-visible {
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 body.tss-theme-weniger .tss-sidebar-btn-rounded > .tss-btn,
@@ -6544,8 +6552,9 @@ body.tss-theme-weniger .tss-sidenav-btn-wrap.tss-sidenav-selected .tss-sidenav-b
 }
 
 body.tss-theme-weniger .tss-sidenav-btn-wrap > .tss-btn.tss-sidenav-btn:focus-visible {
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 body.tss-theme-weniger .tss-sidenav-btn-dot {
@@ -6977,8 +6986,9 @@ body.tss-theme-weniger.tss-dark-mode .tss-icon-toggle > .tss-btn.tss-icon-toggle
 
 body.tss-theme-weniger .tss-icon-toggle > .tss-btn.tss-icon-toggle-item.tss-icon-toggle-item:focus-visible {
     z-index: 1;
-    outline: 2px solid rgba(236, 88, 26, 0.85);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: rgba(236, 88, 26, 0.85);
 }
 
 body.tss-theme-weniger .tss-icon-toggle > .tss-btn.tss-icon-toggle-item.tss-icon-toggle-item.tss-disabled,
@@ -8373,8 +8383,7 @@ body.tss-theme-weniger .tss-tree-checkbox:hover {
 }
 
 body.tss-theme-weniger .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 2px solid rgba(236, 88, 26, 0.75);
-    outline-offset: 1px;
+    box-shadow: inset 0 0 0 2px rgba(236, 88, 26, 0.75);
 }
 
 body.tss-theme-weniger .tss-tree-chevron {

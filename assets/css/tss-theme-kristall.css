@@ -664,8 +664,10 @@ body.tss-theme-kristall .tss-btn:focus {
 }
 
 body.tss-theme-kristall .tss-btn:focus-visible {
-    outline: 3.5px solid var(--tss-kr-focus-ring);
-    outline-offset: 0;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-kr-focus-ring);
+    --tss-btn-focus-width: 3.5px;
 }
 
 
@@ -1902,8 +1904,10 @@ body.tss-theme-kristall .tss-pivot-titlebar > .tss-pivot-selected-title > div {
 }
 
 body.tss-theme-kristall .tss-pivot-titlebar > .tss-btn.tss-pivot-tab:focus-visible {
-    outline: 3px solid var(--tss-kr-focus-ring);
-    outline-offset: -1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-kr-focus-ring);
+    --tss-btn-focus-width: 3px;
 }
 
 body.tss-theme-kristall .tss-pivot-line {
@@ -2414,6 +2418,10 @@ body.tss-theme-kristall .tss-omnibox-inline-chip {
     border-radius: var(--tss-kr-r-pill);
 }
 
+body.tss-theme-kristall .tss-omnibox-container:focus-within::after {
+    content: none;
+}
+
 
 body.tss-theme-kristall .tss-sectiontitle-title {
     font-weight: 700;
@@ -2780,8 +2788,10 @@ body.tss-theme-kristall .tss-sidebar-nav.tss-sidebar-selected > a > .tss-btn:not
 }
 
 body.tss-theme-kristall .tss-sidebar .tss-sidebar-btn.tss-btn:focus-visible {
-    outline: 3px solid var(--tss-kr-focus-ring);
-    outline-offset: -3px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-kr-focus-ring);
+    --tss-btn-focus-width: 3px;
 }
 
 body.tss-theme-kristall .tss-sidebar .tss-sidebar-command.tss-btn {
@@ -3248,8 +3258,10 @@ body.tss-theme-kristall.tss-dark-mode .tss-icon-toggle > .tss-btn.tss-icon-toggl
 }
 
 body.tss-theme-kristall .tss-icon-toggle > .tss-btn.tss-icon-toggle-item:focus-visible {
-    outline: 3px solid var(--tss-kr-focus-ring);
-    outline-offset: -1px;
+    outline: none;
+    box-shadow: var(--tss-btn-focus-shadow) !important;
+    --tss-btn-focus-color: var(--tss-kr-focus-ring);
+    --tss-btn-focus-width: 3px;
 }
 
 
@@ -3468,8 +3480,7 @@ body.tss-theme-kristall.tss-dark-mode .tss-tree-item-content.tss-selected {
 }
 
 body.tss-theme-kristall .tss-tree-item:focus-visible > .tss-tree-item-content {
-    outline: 3px solid var(--tss-kr-focus-ring);
-    outline-offset: -3px;
+    box-shadow: inset 0 0 0 3px var(--tss-kr-focus-ring);
 }
 
 
