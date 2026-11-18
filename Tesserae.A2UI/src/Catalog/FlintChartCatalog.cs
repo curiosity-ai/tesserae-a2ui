@@ -29,7 +29,7 @@ namespace Tesserae.A2UI
         /// </summary>
         private static IComponent FlintChartComponent(ComponentContext cx)
         {
-            var chart = Tesserae.UI.FlintChart(FlintChartType.BarChart).WS();
+            var chart = Tesserae.UI.FlintChart(FlintChartType.BarChart).ContentSources(cx.Surface.Host.ContentSources).WS();
 
             JsonValue rows  = null;
             JsonValue spec  = null;

@@ -18,6 +18,7 @@ namespace Tesserae.A2UI
         private bool _subscribed;
         private bool _disposed;
         private bool _rebuilding;
+        private bool _counted;
 
         internal ComponentSlot(Surface surface, string id, string scope, List<int> indices, string catalogId, ComponentSlot parent)
         {
@@ -27,6 +28,7 @@ namespace Tesserae.A2UI
             Indices   = indices;
             CatalogId = catalogId;
             Parent    = parent;
+            Depth     = parent is null ? 0 : parent.Depth + 1;
         }
 
         public Surface Surface { get; }
@@ -35,6 +37,7 @@ namespace Tesserae.A2UI
         internal List<int> Indices { get; }
         internal string CatalogId { get; }
         internal ComponentSlot Parent { get; }
+        internal int Depth { get; }
         internal Disposer Owned { get; private set; } = new Disposer();
 
         public HTMLElement Render()
@@ -83,6 +86,17 @@ namespace Tesserae.A2UI
         {
             var def = Surface.GetComponent(Id);
             if (def is null) return Placeholder();
+
+            var limits = Surface.Host.Limits;
+
+            if (Depth > limits.MaxComponentDepth) return OverLimit("Component '" + Id + "' is nested deeper than " + limits.MaxComponentDepth + " levels and is not drawn");
+
+            if (!_counted)
+            {
+                if (Surface.RenderedComponents >= limits.MaxRenderedComponents) return OverLimit("The surface already draws " + limits.MaxRenderedComponents + " components: '" + Id + "' is not drawn");
+                Surface.RenderedComponents++;
+                _counted = true;
+            }
 
             // A component that contains itself would render forever.
             for (var p = Parent; p is object; p = p.Parent)
@@ -175,6 +189,13 @@ namespace Tesserae.A2UI
             return d;
         }
 
+        /// <summary>A notice in place of a component a limit keeps from being drawn, reported once.</summary>
+        private HTMLElement OverLimit(string message)
+        {
+            Surface.Host.Report(new A2UIError(A2UIError.ValidationFailed, message, Surface.Id, "/components/" + Id));
+            return Problem(message);
+        }
+
         private HTMLElement Problem(string message)
         {
             var d = document.createElement("div");
@@ -194,6 +215,7 @@ namespace Tesserae.A2UI
             if (_disposed) return;
             _disposed = true;
             if (_subscribed) Surface.ComponentChanged -= OnComponentChanged;
+            if (_counted) { Surface.RenderedComponents--; _counted = false; }
             Owned.Dispose();
         }
     }
@@ -224,6 +246,14 @@ namespace Tesserae.A2UI
         {
             var list  = _cx.Surface.Data.Get(_path);
             var count = list is object && list.IsArray ? list.Count : 0;
+            var max   = _cx.Surface.Host.Limits.MaxTemplateItems;
+
+            if (count > max)
+            {
+                _cx.Report(A2UIError.ValidationFailed, "The list at '" + _path + "' has " + count + " items: the first " + max + " are drawn");
+                count = max;
+            }
+
             if (count == _count) return;
             _count = count;
 

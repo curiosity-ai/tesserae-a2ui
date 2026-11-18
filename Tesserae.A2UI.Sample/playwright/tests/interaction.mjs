@@ -143,6 +143,41 @@ export async function run({ browser, base, suite, L }) {
     } finally { await page.__ctx.close(); }
   });
 
+  await suite.test('Safety: content from another host, openUrl, the limits and a multiplying pattern are kept out, and reported', async () => {
+    const page = await L.open(browser, base, 'Safety', { noWait: true });
+    const requested = [];
+    page.on('request', r => { if (!r.url().startsWith(base) && !r.url().startsWith('data:')) requested.push(r.url()); });
+    const popups = [];
+    page.on('popup', p => popups.push(p));
+    try {
+      await page.getByRole('button', { name: 'Send what the host keeps out' }).waitFor();
+      const t0 = Date.now();
+      await page.getByRole('button', { name: 'Send what the host keeps out' }).click();
+      const stage = page.locator('.a2ui-surface');
+      await stage.getByText('This surface still works').waitFor({ timeout: 5000 });
+      L.assert(Date.now() - t0 < 4000, 'the surface took ' + (Date.now() - t0) + ' ms: the pattern or the array write ran away');
+
+      L.assert(await stage.locator('[data-a2ui-id="leak"]').getAttribute('hidden') !== null, 'the picture on another host must be hidden');
+      L.assert(await stage.locator('[data-a2ui-id="leak"]').getAttribute('src') === null, 'the picture on another host must have no src');
+      L.assert((await stage.locator('[data-a2ui-id="inline"]').getAttribute('src') || '').startsWith('data:'), 'a data: picture still loads');
+      L.assert(await stage.locator('[data-a2ui-id="row"]').count() === 5, 'the template draws five rows, found ' + await stage.locator('[data-a2ui-id="row"]').count());
+      L.assert(await stage.getByText('too deep to draw').count() === 0, 'the component past the depth limit must not be drawn');
+      L.assert(await stage.locator('[data-a2ui-problem]').count() === 1, 'one notice for the component past the depth limit');
+
+      await stage.getByRole('button', { name: 'Open another site' }).click();
+      await L.sleep(500);
+      L.assert(popups.length === 0, 'openUrl must not open a host that is not allowed');
+      L.assert(requested.length === 0, 'requests left the page: ' + requested.join(', '));
+
+      await tab(page, 'Errors').click();
+      await page.locator('.a2ui-error').first().waitFor({ timeout: 3000 });
+      const text = (await page.locator('.a2ui-error').allInnerTexts()).join('\n');
+      for (const part of ['does not load content from the host', 'does not open links to the host', 'the first 5 are drawn', 'nested deeper than 6', 'past the end of the array'])
+        L.assert(text.includes(part), 'missing "' + part + '" in:\n' + text);
+      L.assert(!text.includes('s3cret'), 'an error must not carry the data the URL held:\n' + text);
+    } finally { await page.__ctx.close(); }
+  });
+
   await suite.test('Error handling: broken messages are reported with protocol codes and the page survives', async () => {
     const page = await L.open(browser, base, 'Error Handling', { noWait: true });
     try {

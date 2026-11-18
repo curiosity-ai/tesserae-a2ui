@@ -37,8 +37,8 @@ dotnet build Tesserae.A2UI.slnx                    # Debug: one readable bundle;
 
 Versions follow tesserae-3d: `Transpose.Build.Target/26.8.4125` SDK, `LangVersion` 7.2 (Transpose's C# subset: no switch expressions, no
 records, no `?.` on delegates, no `string.CompareOrdinal`, no `NumberStyles`; `x is object y` types `y` as `object`, write `x is JsonValue y`),
-`Transpose.BCL` / `Core` and `Tesserae` as NuGet packages. Tesserae is **2026.11.73511**, not tesserae-3d's older one, because the sample uses `JsonViewer`;
-the themes must be the same build number (`26.11.73511`; a newer Tesserae than its themes has no matching set on NuGet).
+`Transpose.BCL` / `Core` and `Tesserae` as NuGet packages. Tesserae is **2026.11.73696**, not tesserae-3d's older one, because the sample uses `JsonViewer`;
+the themes must be the same build number (`26.11.73696`; a newer Tesserae than its themes has no matching set on NuGet).
 Zero build warnings. Type safety: no `dynamic`; JSON is `JsonValue`, never an untyped JavaScript object.
 
 The package is built as modules and its chunks defer (`tps.json`: `outputBy: Module`, `loadCompiledOutput: false`, `IsPackable`): a consumer
@@ -64,6 +64,13 @@ loads the entry itself first, `await Transpose.Require.RequireAsync(Transpose.Re
   for a change that must stay on one host. Code that serves several pages of one app (the gallery) uses `OwnCatalog`, or changing it on one page changes it on all.
 - **Catalogs resolve strictly**: a component's `@catalogId`, else the surface's `catalogId`, else an error (no fallback unless `A2UIHost.FallbackCatalog`). A child never takes its parent's catalog, so an extension container (`Grid`, `Accordion`) holds basic-catalog children without naming it.
   Functions are `rendererOnly` by default; the agent may call only `agentOnly` / `rendererOrAgent` ones; `requiresUserActivation` functions run only in an action.
+- **An agent is not trusted with the page.** Two things on `A2UIHost` say how far it reaches. `ContentSources` (a Tesserae `MarkdownContentSources`, `Any` by default;
+  `AllowHosts(hosts)` sets same origin plus those hosts) is where content may load from and what `openUrl` may open: `MediaUrl.IsSafe(url, sources)` for `Image` / `Video` /
+  `AudioPlayer`, passed to `Mermaid` and `FlintChart`, checked in `openUrl`. A new component that takes a URL from its definition asks it too. `Limits` (`A2UILimits`)
+  bounds what one host holds: message length, surfaces, components per surface, components drawn, nesting, template items, how far past its end an array is written
+  (`DataModel.Refused`), plus JSON and expression nesting. Reaching one leaves the part over the limit out and reports it once; nothing throws. The defaults are far
+  above real use on purpose: lower one only for a reason. `RegexDialect` decides from a pattern's text whether it may run at all and how long a value it may be tried on,
+  because a backtracking match cannot be stopped once it has started.
 - **Everything the renderer cannot do is a protocol error, not an exception**: `A2UIHost.Report` dedupes, raises `OnError` and sends the envelope to the agent.
 
 ## Tesserae is a library and its consumers are invisible
@@ -87,7 +94,7 @@ The theme is chosen with `?theme=<id>&dark=1` or the Theme nav (`localStorage["t
 
 `Tesserae.A2UI.Sample/playwright/` (committed): plain node + Playwright, `npm test`; it serves the built sample itself. Screenshots go to `$SCREENS_DIR`
 (gitignored), named after the page, theme and mode. Suites: `examples` (all 43 render with no console error and no renderer problem), `interaction` (binding,
-actions, checks, templates, tabs, modal, streaming, playground, errors, custom catalog, function calls both ways), `themes` (the Showcase page in 15 themes, light and
+actions, checks, templates, tabs, modal, streaming, playground, safety (content sources and limits), errors, custom catalog, function calls both ways), `themes` (the Showcase page in 15 themes, light and
 dark; `THEMES=stratus,washi` limits it). `node run.mjs --only a,b`; `FULL_ERR=1` prints a failure whole. Wait out the sections' fade-in before reading or capturing
 (`L.open` does). Pivot tabs are `role=tab`. A remote image the sandbox cannot reach logs `Failed to load resource`: the tests ignore exactly that.
 

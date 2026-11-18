@@ -66,7 +66,25 @@ MountToBody(host.S());                                         // a host is an o
 | `AudioPlayer` | `AudioPlayer` (waveform seek bar, native-controls fallback); `description` is its accessible name |
 
 Functions: `required` `regex` `length` `numeric` `email` `formatString` `formatNumber` `formatCurrency` `formatDate` (Unicode TR35 patterns)
-`pluralize` `openUrl` (user gesture only, http/https only) `and` `or` `not`, and the system function `@index`.
+`pluralize` `openUrl` (user gesture only, http/https only, and only hosts the application allows) `and` `or` `not`, and the system function `@index`.
+
+## What an agent may reach
+
+An agent writes every URL a surface carries, and a URL can hold anything the agent read from the data model. By default every host is allowed, as the protocol
+describes. To keep content and links to the page's own origin and the hosts you list:
+
+```csharp
+var host = new A2UIHost().AllowHosts(new[] { "images.example.com", "*.example-cdn.com" });
+// or: host.ContentSources = MarkdownContentSources.SameOrigin;
+```
+
+It applies to `Image`, `Video` and `AudioPlayer`, to what a `Mermaid` diagram or a `FlintChart` would fetch, and to `openUrl`. What is not allowed is not loaded
+and is reported as an error.
+
+`host.Limits` (`A2UILimits`) bounds how much one host holds: message length, surfaces, components per surface, components drawn at once, nesting depth, items one
+template draws, and how far past its end an array may be written. The defaults are far above what an interface needs; reaching one leaves the rest out and reports
+it, and the page keeps working. A `regex` pattern is checked before it runs: one that could take exponential time is an error, and one whose repeats multiply
+(`a*a*a*c`) is tested only against a short value.
 
 ### A custom catalog
 

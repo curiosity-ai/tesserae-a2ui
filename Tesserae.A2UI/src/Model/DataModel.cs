@@ -16,6 +16,12 @@ namespace Tesserae.A2UI
         /// <summary>Raised after every change with the pointer that changed ("" for the whole document).</summary>
         public event Action<string> Changed;
 
+        /// <summary>Raised with the pointer and the reason when a write was refused, and nothing changed.</summary>
+        public event Action<string, string> Refused;
+
+        /// <summary>How far past the end of an array a write may land: see <see cref="A2UILimits.MaxArrayGap"/>.</summary>
+        public int MaxArrayGap { get; set; } = new A2UILimits().MaxArrayGap;
+
         public JsonValue Root => _root;
 
         /// <summary>Normalises "/" and "" to the root pointer "".</summary>
@@ -78,7 +84,7 @@ namespace Tesserae.A2UI
                 if (next is null || !(next.IsObject || next.IsArray))
                 {
                     next = TryIndex(tokens[i + 1], out _) ? JsonValue.NewArray() : JsonValue.NewObject();
-                    Put(node, token, next);
+                    if (!Put(node, token, next, path)) return;
                 }
 
                 node = next;
@@ -93,7 +99,7 @@ namespace Tesserae.A2UI
             }
             else
             {
-                Put(node, last, value.Clone());
+                if (!Put(node, last, value.Clone(), path)) return;
             }
 
             Notify(path);
@@ -106,15 +112,25 @@ namespace Tesserae.A2UI
             return null;
         }
 
-        private static void Put(JsonValue node, string token, JsonValue value)
+        /// <summary>False when the write was refused: an index too far past the end of its array.</summary>
+        private bool Put(JsonValue node, string token, JsonValue value, string path)
         {
-            if (node.IsObject) { node.Set(token, value); return; }
+            if (node.IsObject) { node.Set(token, value); return true; }
 
             if (node.IsArray && TryIndex(token, out var i))
             {
+                // An index pads the array up to it, so one far past the end is a request for that many empty items.
+                if (i - node.Items.Count > MaxArrayGap)
+                {
+                    Refused?.Invoke(path, "index " + token + " is more than " + MaxArrayGap + " past the end of the array (" + node.Items.Count + " items)");
+                    return false;
+                }
+
                 while (node.Items.Count <= i) node.Items.Add(JsonValue.Null);
                 node.Items[i] = value;
             }
+
+            return true;
         }
 
         private static bool TryIndex(string token, out int index)
@@ -122,6 +138,8 @@ namespace Tesserae.A2UI
             index = 0;
             if (token.Length == 0) return false;
             foreach (var c in token) if (c < '0' || c > '9') return false;
+            // Ten digits can already be more than an int holds; nothing that long is an index of a list worth keeping.
+            if (token.Length > 9) { index = int.MaxValue; return true; }
             return int.TryParse(token, out index);
         }
 

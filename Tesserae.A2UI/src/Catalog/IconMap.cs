@@ -85,39 +85,4 @@ namespace Tesserae.A2UI
 
         public static IEnumerable<string> Names => Map.Keys;
     }
-
-    /// <summary>The media URL rules of the basic catalog guide: http, https, data and same-host relative URLs only.</summary>
-    public static class MediaUrl
-    {
-        public static bool IsSafe(string url)
-        {
-            if (url is null) return false;
-
-            var t = url.Trim();
-            if (t.Length == 0) return false;
-
-            // Browsers drop tab, CR and LF inside a URL before parsing it, so the checks look at the same text.
-            var sb = new System.Text.StringBuilder();
-            foreach (var c in t) if (c != '\t' && c != '\n' && c != '\r' && c >= ' ') sb.Append(c);
-            var s = sb.ToString();
-            if (s.Length == 0) return false;
-
-            var colon = s.IndexOf(':');
-            var slash = s.IndexOfAny(new[] { '/', '?', '#', '\\' });
-            var hasScheme = colon > 0 && (slash < 0 || colon < slash);
-
-            if (hasScheme)
-            {
-                var scheme = s.Substring(0, colon).ToLowerInvariant();
-                if (scheme == "data") return true;
-                if (scheme != "http" && scheme != "https") return false;
-                var rest = s.Substring(colon + 1);
-                return rest.StartsWith("//") && rest.Length > 2 && rest[2] != '/' && rest[2] != '\\';
-            }
-
-            // relative: "//host" (and "\\host") point at another host
-            var first = s.Replace('\\', '/');
-            return !first.StartsWith("//");
-        }
-    }
 }

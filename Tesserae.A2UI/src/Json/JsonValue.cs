@@ -314,8 +314,15 @@ namespace Tesserae.A2UI
         {
             private readonly string _s;
             private int _i;
+            private int _depth;
 
             public Parser(string s) { _s = s; }
+
+            // Everything that walks a value recurses once per level, so the depth is settled here, where it is still an error message.
+            private void Enter()
+            {
+                if (++_depth > A2UILimits.MaxJsonDepth) throw Error("JSON is nested deeper than " + A2UILimits.MaxJsonDepth + " levels");
+            }
 
             public bool AtEnd => _i >= _s.Length;
 
@@ -356,9 +363,10 @@ namespace Tesserae.A2UI
             private JsonValue ReadObject()
             {
                 var o = NewObject();
+                Enter();
                 _i++;
                 SkipWhitespace();
-                if (!AtEnd && _s[_i] == '}') { _i++; return o; }
+                if (!AtEnd && _s[_i] == '}') { _i++; _depth--; return o; }
 
                 while (true)
                 {
@@ -373,7 +381,7 @@ namespace Tesserae.A2UI
                     SkipWhitespace();
                     if (AtEnd) throw Error("Unterminated object");
                     if (_s[_i] == ',') { _i++; continue; }
-                    if (_s[_i] == '}') { _i++; return o; }
+                    if (_s[_i] == '}') { _i++; _depth--; return o; }
                     throw Error("Expected ',' or '}'");
                 }
             }
@@ -381,9 +389,10 @@ namespace Tesserae.A2UI
             private JsonValue ReadArray()
             {
                 var a = NewArray();
+                Enter();
                 _i++;
                 SkipWhitespace();
-                if (!AtEnd && _s[_i] == ']') { _i++; return a; }
+                if (!AtEnd && _s[_i] == ']') { _i++; _depth--; return a; }
 
                 while (true)
                 {
@@ -392,7 +401,7 @@ namespace Tesserae.A2UI
                     SkipWhitespace();
                     if (AtEnd) throw Error("Unterminated array");
                     if (_s[_i] == ',') { _i++; continue; }
-                    if (_s[_i] == ']') { _i++; return a; }
+                    if (_s[_i] == ']') { _i++; _depth--; return a; }
                     throw Error("Expected ',' or ']'");
                 }
             }

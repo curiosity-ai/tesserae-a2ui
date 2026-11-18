@@ -18,7 +18,12 @@ namespace Tesserae.A2UI
             Id            = id;
             CatalogId     = catalogId;
             SendDataModel = sendDataModel;
+
+            Data.Refused += (path, reason) => Host?.Report(new A2UIError(A2UIError.ValidationFailed, "The data model was not changed: " + reason, Id, path));
         }
+
+        /// <summary>The components drawn right now, template items included: what <see cref="A2UILimits.MaxRenderedComponents"/> counts.</summary>
+        internal int RenderedComponents { get; set; }
 
         public string Id { get; }
         public string CatalogId { get; }
@@ -63,6 +68,13 @@ namespace Tesserae.A2UI
                 }
                 else
                 {
+                    var max = Host is object ? Host.Limits.MaxComponentsPerSurface : int.MaxValue;
+                    if (_order.Count >= max)
+                    {
+                        Host?.Report(new A2UIError(A2UIError.ValidationFailed, "The surface already holds " + max + " components: no more are added", Id, "/components"));
+                        continue;
+                    }
+
                     _order.Add(id);
                 }
 

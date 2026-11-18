@@ -12,8 +12,12 @@ Running list of what is not done or is rough. Nothing here is hidden by a green 
   `EXPRESSION_ERROR`; there is no shared in-flight call or cache for reactive agent calls.
 - Catalog JSON Schemas are not loaded: catalogs are registered in code, and `agent_capabilities` / `renderer_capabilities` negotiation is left to the transport.
 - Incoming messages are checked structurally (envelope shape, ids, `theme` rejected) but not validated against the JSON Schemas.
-- The regex safety check implements the length cap, the forbidden constructs, and the nested-unbounded-quantifier and alternation rules; the adjacent
-  overlapping-quantifier rule (rule 4) is not implemented.
+- The regex safety check refuses what can take exponential time and shortens the value for what can take polynomial time (`RegexDialect.MaxValueLengthFor`),
+  from the pattern's text alone. What a repeat can match is compared over a sample of characters and a group is taken to match anything, so it errs towards
+  the shorter value; a value over the limit does not match, without saying why.
+- `A2UIHost.ContentSources` defaults to every host, as the protocol describes. An application that does not trust its agent with the data model has to set it.
+- `A2UILimits.MaxJsonDepth` and the expression nesting limit have no test.
+- The `examples` suite fails on "Podcast Episode" wherever its audio host is reachable: the host sends no CORS header and Tesserae's `AudioPlayer` asks for one.
 
 ## Components
 - `Slider` moves in whole steps (a decimal range is mapped onto up to 100 positions).
