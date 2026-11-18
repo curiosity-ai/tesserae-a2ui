@@ -173,6 +173,10 @@ namespace Tesserae.A2UI
             var abs = Js.ResolveUrl(raw);
             if (abs is null || !(abs.StartsWith("https://") || abs.StartsWith("http://")))
                 throw new A2UIFunctionException(A2UIError.ExpressionError, "openUrl only opens http and https URLs");
+
+            var sources = ctx.Surface.Host?.ContentSources;
+            if (sources is object && sources.IsRestricted && !sources.Allows(abs))
+                throw new A2UIFunctionException(A2UIError.ExpressionError, "openUrl: this application does not open links to the host of '" + abs + "'");
             Js.OpenUrl(abs);
             return JsonValue.Null;
         }

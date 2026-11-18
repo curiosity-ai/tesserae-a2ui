@@ -43,6 +43,20 @@ namespace Tesserae.A2UI
             return s.Replace("**", "").Replace("__", "").Replace("`", "").Trim();
         }
 
+        /// <summary>
+        /// Whether a media component may load <paramref name="url"/>. A URL of a shape the catalog does not allow is dropped
+        /// quietly, as before; one the host's <see cref="A2UIHost.ContentSources"/> keeps out is reported, so the agent learns
+        /// why its picture is missing.
+        /// </summary>
+        private static bool Loadable(ComponentContext cx, string component, string url)
+        {
+            if (!MediaUrl.IsSafe(url)) return false;
+            if (MediaUrl.IsSafe(url, cx.Surface.Host.ContentSources)) return true;
+
+            cx.Report(A2UIError.ValidationFailed, component + " '" + cx.Id + "': this application does not load content from the host of its URL");
+            return false;
+        }
+
         // ------------------------------------------------------------------ Image
 
         public static IComponent Image(ComponentContext cx)
@@ -84,7 +98,7 @@ namespace Tesserae.A2UI
             cx.BindString("description", s => el.setAttribute("alt", s));
             cx.BindString("url", u =>
             {
-                if (MediaUrl.IsSafe(u)) { el.removeAttribute("hidden"); img.Source = u.Trim(); }
+                if (Loadable(cx, "Image", u)) { el.removeAttribute("hidden"); img.Source = u.Trim(); }
                 else { el.removeAttribute("src"); el.setAttribute("hidden", ""); }
             });
 
@@ -152,11 +166,11 @@ namespace Tesserae.A2UI
 
             cx.BindString("url", u =>
             {
-                if (MediaUrl.IsSafe(u)) { el.style.display = ""; player.SetSource(u.Trim()); }
+                if (Loadable(cx, "Video", u)) { el.style.display = ""; player.SetSource(u.Trim()); }
                 else { el.style.display = "none"; }
             });
 
-            cx.BindString("posterUrl", u => { if (MediaUrl.IsSafe(u)) player.Poster(u.Trim()); });
+            cx.BindString("posterUrl", u => { if (Loadable(cx, "Video", u)) player.Poster(u.Trim()); });
             return player;
         }
 
@@ -169,7 +183,7 @@ namespace Tesserae.A2UI
 
             cx.BindString("url", u =>
             {
-                if (MediaUrl.IsSafe(u)) { el.style.display = ""; player.SetSource(u.Trim()); }
+                if (Loadable(cx, "AudioPlayer", u)) { el.style.display = ""; player.SetSource(u.Trim()); }
                 else { el.style.display = "none"; }
             });
 

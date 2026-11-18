@@ -47,7 +47,7 @@ namespace Tesserae.A2UI
         /// <summary><c>source</c> (Mermaid text, bindable), <c>zoom</c>.</summary>
         public static IComponent Mermaid(ComponentContext cx)
         {
-            var diagram = Tesserae.UI.Mermaid("");
+            var diagram = Tesserae.UI.Mermaid("").ContentSources(cx.Surface.Host.ContentSources);
             if (cx.Flag("zoom", false)) diagram.Zoom();
             diagram.OnError(message => cx.Report("INVALID_DIAGRAM", "Mermaid '" + cx.Id + "': " + message));
 

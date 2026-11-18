@@ -157,9 +157,22 @@ namespace Tesserae.A2UI
     {
         private readonly string _s;
         private readonly EvalContext _ctx;
+        private readonly int _depth;
         private int _i;
+        private int _calls;
 
-        public ExpressionParser(string s, EvalContext ctx) { _s = s; _ctx = ctx; }
+        public ExpressionParser(string s, EvalContext ctx, int depth = 0)
+        {
+            _s     = s;
+            _ctx   = ctx;
+            _depth = depth;
+        }
+
+        private void Nest(int depth)
+        {
+            if (depth > A2UILimits.MaxExpressionDepth)
+                throw new A2UIFunctionException(A2UIError.ExpressionError, "The expression nests deeper than " + A2UILimits.MaxExpressionDepth + " levels");
+        }
 
         public JsonValue ParseTop()
         {
@@ -181,7 +194,8 @@ namespace Tesserae.A2UI
                 if (end < 0) throw new A2UIFunctionException(A2UIError.ExpressionError, "Unterminated ${ in '" + _s + "'");
                 var inner = _s.Substring(_i + 2, end - (_i + 2));
                 _i = end + 1;
-                return new ExpressionParser(inner, _ctx).ParseTop();
+                Nest(_depth + _calls + 1);
+                return new ExpressionParser(inner, _ctx, _depth + _calls + 1).ParseTop();
             }
 
             if (c == '\'' || c == '"') return JsonValue.String(ReadQuoted(c));
@@ -230,6 +244,7 @@ namespace Tesserae.A2UI
         private JsonValue ParseCall(string name)
         {
             _i++; // (
+            Nest(_depth + ++_calls);
             var args = JsonValue.NewObject();
 
             while (true)
@@ -248,6 +263,8 @@ namespace Tesserae.A2UI
                 Ws();
                 if (_i < _s.Length && _s[_i] == ',') _i++;
             }
+
+            _calls--;
 
             // Arguments are already values here; calling with them as literals must not re-interpret strings as bindings.
             return CallResolved(name, args);

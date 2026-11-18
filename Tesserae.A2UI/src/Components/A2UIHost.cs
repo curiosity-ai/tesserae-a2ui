@@ -149,6 +149,32 @@ namespace Tesserae.A2UI
         /// </summary>
         public Catalog FallbackCatalog { get; set; }
 
+        // ------------------------------------------------------------------ what an agent may reach and how much it may ask for
+
+        /// <summary>
+        /// Where the interface may load content from, and which sites <c>openUrl</c> may open: <see cref="MarkdownContentSources.Any"/>
+        /// by default, which is what the protocol describes. An agent writes every URL a surface carries, and a URL can hold
+        /// anything the agent read from the data model, so an application that does not trust its agent with that narrows it to
+        /// its own origin and the hosts it lists (<see cref="MarkdownContentSources.SameOriginAnd(string[])"/>). It applies to
+        /// <c>Image</c>, <c>Video</c> and <c>AudioPlayer</c>, to what a <c>Mermaid</c> diagram or a <c>FlintChart</c> would fetch,
+        /// and to <c>openUrl</c>. What is not allowed is not loaded, and the host reports it. Set it before feeding the host
+        /// messages: a component already drawn keeps what it loaded.
+        /// </summary>
+        public MarkdownContentSources ContentSources { get; set; } = MarkdownContentSources.Any;
+
+        /// <summary>Sets <see cref="ContentSources"/>. <c>null</c> is <see cref="MarkdownContentSources.Any"/>.</summary>
+        public A2UIHost WithContentSources(MarkdownContentSources sources)
+        {
+            ContentSources = sources ?? MarkdownContentSources.Any;
+            return this;
+        }
+
+        /// <summary>Content loads, and <c>openUrl</c> opens, only on the page's own origin and on <paramref name="hosts"/> (<c>images.example.com</c>, or <c>*.example.com</c> for a domain and its subdomains).</summary>
+        public A2UIHost AllowHosts(IEnumerable<string> hosts) => WithContentSources(MarkdownContentSources.SameOriginAnd(hosts));
+
+        /// <summary>How much an agent may ask this host to hold. See <see cref="A2UILimits"/>.</summary>
+        public A2UILimits Limits { get; } = new A2UILimits();
+
         // ------------------------------------------------------------------ events
 
         /// <summary>Adds a handler. Raised when the user triggers an agent action (a Button's <c>action.event</c>).</summary>
@@ -203,6 +229,8 @@ namespace Tesserae.A2UI
         /// <summary>Applies messages from any stream shape (JSON Lines, one envelope, an array, a sample file). Malformed input is reported as errors.</summary>
         public A2UIHost Process(string text)
         {
+            if (TooLong(text)) return this;
+
             var errors = new List<string>();
             foreach (var json in A2UIMessage.ReadStream(text, errors)) Process(json);
             foreach (var e in errors) Report(new A2UIError(A2UIError.ValidationFailed, "Not valid JSON: " + e));
@@ -212,6 +240,8 @@ namespace Tesserae.A2UI
         /// <summary>Applies the messages with a pause between them, as a live stream would deliver them.</summary>
         public async Task ProcessAsync(string text, int delayMs)
         {
+            if (TooLong(text)) return;
+
             var errors = new List<string>();
             foreach (var json in A2UIMessage.ReadStream(text, errors))
             {
@@ -219,6 +249,14 @@ namespace Tesserae.A2UI
                 if (delayMs > 0) await Task.Delay(delayMs);
             }
             foreach (var e in errors) Report(new A2UIError(A2UIError.ValidationFailed, "Not valid JSON: " + e));
+        }
+
+        private bool TooLong(string text)
+        {
+            if (text is null || text.Length <= Limits.MaxMessageLength) return false;
+
+            Report(new A2UIError(A2UIError.ValidationFailed, "A message of " + text.Length + " characters is longer than the " + Limits.MaxMessageLength + " this host reads, and was not applied"));
+            return true;
         }
 
         public A2UIHost Process(JsonValue json)
@@ -287,11 +325,18 @@ namespace Tesserae.A2UI
                 return;
             }
 
+            if (_surfaces.Count >= Limits.MaxSurfaces)
+            {
+                Report(new A2UIError(A2UIError.ValidationFailed, "This host already holds " + Limits.MaxSurfaces + " surfaces: '" + m.SurfaceId + "' was not created", m.SurfaceId));
+                return;
+            }
+
             var catalogId = m.CatalogId;
             if (ResolveCatalog(catalogId) is null && FallbackCatalog is object) catalogId = FallbackCatalog.Id;
             if (FallbackCatalog is object && !_catalogs.ContainsKey(FallbackCatalog.Id)) RegisterCatalog(FallbackCatalog);
 
             var surface = new Surface(m.SurfaceId, catalogId, m.SendDataModel) { Host = this };
+            surface.Data.MaxArrayGap = Limits.MaxArrayGap;
             _surfaces[m.SurfaceId] = surface;
             _surfaceOrder.Add(m.SurfaceId);
 
