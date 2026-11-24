@@ -10259,7 +10259,7 @@ __metadata:
     "@angular/google-maps": "npm:^21.2.5"
     "@angular/material": "npm:^21.2.5"
     "@angular/platform-browser": "npm:^21.2.5"
-    "@angular/platform-server": "npm:^21.2.5"
+    "@angular/platform-server": "npm:^21.2.25"
     "@angular/router": "npm:^21.2.5"
     "@angular/ssr": "npm:^21.2.5"
     "@google/genai": "npm:^2.8.0"
